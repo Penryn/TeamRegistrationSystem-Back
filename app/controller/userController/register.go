@@ -68,6 +68,11 @@ func Register(c *gin.Context) {
 		Phone:    data.Phone,
 		Email:    data.Email,
 		Password: pwd,
+		Userinfo: models.Userinfo{
+			Name: data.Name,
+			Phone: data.Phone,
+			Email: data.Email,
+		},
 	})
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)

@@ -5,6 +5,7 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -51,6 +52,28 @@ func Login(c *gin.Context) {
 		utils.JsonErrorResponse(c,402,"密码错误")
 		return
 	}
-	utils.JsonSuccessResponse(c,user)
+	token ,err:=utils.GenToken(user.UserID)
+	if err !=nil{
+		utils.JsonInternalServerErrorResponse(c)
+		return
+	}
+
+	type ulogin struct{
+		UserID int `json:"user_id"`
+		Name   string `json:"name"`
+		Token   string `jsonL:"token"`
+	}
+	var nn ulogin
+
+	nn.Name=user.Name
+	nn.Token=token
+	nn.UserID=user.UserID
+
+	c.JSON(http.StatusAccepted,gin.H{
+		"code":200,
+		"msg":"ok",
+		"data":nn,
+
+	})
 
 }

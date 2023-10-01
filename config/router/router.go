@@ -15,6 +15,7 @@ func Init(r *gin.Engine){
 		{
 			user.POST("/login",userController.Login)
 			user.POST("/reg",userController.Register)
+			user.PUT("/info",userController.Updateinfodata)
 		}
 
 	}
