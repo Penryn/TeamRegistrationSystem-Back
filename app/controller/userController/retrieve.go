@@ -39,8 +39,13 @@ func Retrieve(c *gin.Context) {
 	}
 	flag1:=userService.Compare(data.Email,user.Email)
 	flag2:=userService.Compare(data.Phone,user.Phone)
+	flag3:=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(data.Password))
 	if !flag1||!flag2{
 		utils.JsonErrorResponse(c,200220,"手机号或邮箱错误")
+		return
+	}
+	if flag3 ==nil{
+		utils.JsonErrorResponse(c,402,"密码与前一次相同")
 		return
 	}
 	pwd, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
