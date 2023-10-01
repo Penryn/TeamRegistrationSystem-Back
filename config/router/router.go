@@ -10,6 +10,7 @@ import (
 func Init(r *gin.Engine){
 	r.POST("/login",userController.Login)
 	r.POST("/reg",userController.Register)
+	r.PUT("/ret",userController.Retrieve)
 	const pre = "/api"
 
 	api:=r.Group(pre)
@@ -17,6 +18,8 @@ func Init(r *gin.Engine){
 		user:=api.Group("/user").Use(midwares.JWTAuthMiddleware())
 		{
 			user.PUT("/info",userController.Updateinfodata)
+			user.PUT("/avatar",userController.AvatarUpload)
+			user.GET("/info",userController.GetUserInfo)
 		}
 
 	}

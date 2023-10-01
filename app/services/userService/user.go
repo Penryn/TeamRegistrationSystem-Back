@@ -65,6 +65,42 @@ func Register(user models.User) error {
 }
 
 func Updatainfo(info models.Userinfo)error{
-	result :=database.DB.Model(&info).Omit("Avatar").Updates(models.Userinfo{Name: info.Name,Phone: info.Phone,Email: info.Email,Birthday:info.Birthday,Address: info.Address,Motto: info.Motto})
+	result :=database.DB.Model(&info).Updates(models.Userinfo{Name: info.Name,Phone: info.Phone,Email: info.Email,Birthday:info.Birthday,Address: info.Address,Motto: info.Motto})
+	return result.Error
+}
+
+func UpdataAvatar(info models.Userinfo)error{
+	result :=database.DB.Model(&info).Update("avatar",info.Avatar)
+	return result.Error
+}
+
+func GetInfoList(userID int) ([]models.Userinfo, error) {
+	result := database.DB.Where("user_id=?", userID).Find(&models.Userinfo{})
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	var infoList []models.Userinfo
+	result = database.DB.Where("user_id=?", userID).Find(&infoList)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return infoList, nil
+}
+
+func GetUserByName(nAme string)(*models.User,error){
+	var user models.User
+	result :=database.DB.Where("name = ?",nAme).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func Compare(t1 string, t2 string) bool {
+	return t1 == t2
+}
+
+func UpdataPassword(user models.User)error{
+	result :=database.DB.Model(&user).Update("password",user.Password)
 	return result.Error
 }

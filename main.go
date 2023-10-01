@@ -11,6 +11,7 @@ import (
 func main() {
 	database.Init()
 	r := gin.Default()
+	r.Static("/uploads", "./uploads")
 	router.Init(r)
 	err:=r.Run()
 	if err !=nil{
