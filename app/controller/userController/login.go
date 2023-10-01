@@ -69,7 +69,7 @@ func Login(c *gin.Context) {
 	nn.Token=token
 	nn.UserID=user.UserID
 
-	c.JSON(http.StatusAccepted,gin.H{
+	c.JSON(http.StatusOK,gin.H{
 		"code":200,
 		"msg":"ok",
 		"data":nn,
