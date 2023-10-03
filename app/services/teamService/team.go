@@ -146,3 +146,13 @@ func UpdateUserNumber(tid int)error{
 	return result.Error
 
 }
+
+func Updatasubmit(team models.Team)error{
+	result :=database.DB.Model(&team).Update("confirm",1)
+	return result.Error
+}
+
+func Updatacancel(team models.Team)error{
+	result :=database.DB.Model(&team).Update("confirm",0)
+	return result.Error
+}

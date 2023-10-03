@@ -32,6 +32,8 @@ func Init(r *gin.Engine){
 			team.GET("",teamController.SearchTeam)
 			team.GET("/info",teamController.GetTeamInfo)
 			team.PUT("/info",teamController.UpdateTeamInfo)
+			team.PUT("/cancel",teamController.CancelTeam)
+			team.PUT("/submit",teamController.SubmitTeam)
 			team.PUT("/avatar",teamController.TeamAvatarUpload)
 			
 		}
