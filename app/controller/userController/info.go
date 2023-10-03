@@ -4,7 +4,6 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
-	"fmt"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -125,7 +124,6 @@ func AvatarUpload(c *gin.Context) {
 		ID:     user.ID,
 		Avatar: url,
 	})
-	fmt.Println(url)
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return

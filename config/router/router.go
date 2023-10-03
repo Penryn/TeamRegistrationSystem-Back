@@ -25,8 +25,15 @@ func Init(r *gin.Engine){
 		team:=api.Group("/team").Use(midwares.JWTAuthMiddleware())
 		{
 			team.POST("/create",teamController.CreateTeam)
+			team.DELETE("/delete",teamController.BreakTeam)
+			team.DELETE("/dismiss",teamController.DismissUser)
+			team.DELETE("",teamController.LeaveTeam)
 			team.POST("",teamController.JoinTeam)
 			team.GET("",teamController.SearchTeam)
+			team.GET("/info",teamController.GetTeamInfo)
+			team.PUT("/info",teamController.UpdateTeamInfo)
+			team.PUT("/avatar",teamController.TeamAvatarUpload)
+			
 		}
 
 	}

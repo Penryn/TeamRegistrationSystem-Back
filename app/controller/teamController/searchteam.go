@@ -27,7 +27,7 @@ func SearchTeam(c *gin.Context){
 	if er==nil{
 		//输入为队伍id
 		var teamList []models.Team
-		teamList ,err =teamService.GetClassListByTeamID(n)
+		teamList ,err =teamService.GetTeamListByTeamID(n)
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
 				utils.JsonErrorResponse(c, 404, "课程为空")
@@ -43,7 +43,7 @@ func SearchTeam(c *gin.Context){
 	}else{
 		//输入为队伍名称
 		var teamList []models.Team
-		teamList ,err =teamService.GetClassListByTeamName(data.TeamData)
+		teamList ,err =teamService.GetTeamListByTeamName(data.TeamData)
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
 				utils.JsonErrorResponse(c, 404, "队伍不存在")

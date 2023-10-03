@@ -8,6 +8,6 @@ type User struct {
 	Password   []byte `json:"-"`
 	Permission int    `json:"-"`
 	TeamID    int     `json:"team_id"`
-	Team      Team    `json:"team"`
+	Team      Team    `json:"-"`
 	Userinfo  Userinfo `json:"user_info"`
 }
