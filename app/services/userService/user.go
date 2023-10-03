@@ -60,13 +60,20 @@ func GetUserByAccount(aCCount string) (*models.User, error) {
 }
 
 func Register(user models.User) error {
-	result := database.DB.Create(&user)
+	result := database.DB.Omit("team_id").Create(&user)
 	return result.Error
 }
 
 func Updatainfo(info models.Userinfo)error{
-	result :=database.DB.Model(&info).Updates(models.Userinfo{Name: info.Name,Phone: info.Phone,Email: info.Email,Birthday:info.Birthday,Address: info.Address,Motto: info.Motto})
-	return result.Error
+	r1 :=database.DB.Model(&info).Updates(models.Userinfo{Name: info.Name,Phone: info.Phone,Email: info.Email,Birthday:info.Birthday,Address: info.Address,Motto: info.Motto})
+	r2:=database.DB.Model(&models.User{UserID: info.UserID}).Updates(models.User{Name: info.Name,Phone: info.Phone,Email: info.Email})
+	if r1.Error!=nil{
+		return r1.Error
+	}else if r2.Error!=nil{
+		return r2.Error
+	}else{
+		return nil
+	}
 }
 
 func UpdataAvatar(info models.Userinfo)error{

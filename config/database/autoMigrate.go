@@ -8,9 +8,11 @@ import (
 
 func autoMigrate(db *gorm.DB) error {
 	err := db.AutoMigrate(
+		&models.Team{},
 		&models.User{},
 		&models.Userinfo{},
 	)
+	//db.Model(&models.Team{}).Association("Users")
 
 	return err
 }

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"TeamRegistrationSystem-Back/app/controller/teamController"
 	"TeamRegistrationSystem-Back/app/controller/userController"
 	"TeamRegistrationSystem-Back/app/midwares"
 
@@ -14,12 +15,18 @@ func Init(r *gin.Engine){
 	const pre = "/api"
 
 	api:=r.Group(pre)
-	{
+	{	
 		user:=api.Group("/user").Use(midwares.JWTAuthMiddleware())
 		{
 			user.PUT("/info",userController.Updateinfodata)
 			user.PUT("/avatar",userController.AvatarUpload)
 			user.GET("/info",userController.GetUserInfo)
+		}
+		team:=api.Group("/team").Use(midwares.JWTAuthMiddleware())
+		{
+			team.POST("/create",teamController.CreateTeam)
+			team.POST("",teamController.JoinTeam)
+			team.GET("",teamController.SearchTeam)
 		}
 
 	}

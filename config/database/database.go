@@ -23,6 +23,8 @@ func Init() {
 
 	if err != nil {
 		log.Fatal("Database connect failed: ", err)
+	}else {
+		fmt.Printf("database start")
 	}
 
 	// 自动建表（已有不会覆盖）

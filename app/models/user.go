@@ -7,5 +7,7 @@ type User struct {
 	Email      string `json:"email"`
 	Password   []byte `json:"-"`
 	Permission int    `json:"-"`
+	TeamID    int     `json:"team_id"`
+	Team      Team    `json:"team"`
 	Userinfo  Userinfo `json:"user_info"`
 }
