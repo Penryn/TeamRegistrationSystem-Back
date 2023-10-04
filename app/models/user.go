@@ -6,8 +6,8 @@ type User struct {
 	Phone      string `json:"phone"`
 	Email      string `json:"email"`
 	Password   []byte `json:"-"`
-	Permission int    `json:"-"`
+	Permission int    `json:"-"`   //0代表用户，1代表管理员
 	TeamID    int     `json:"team_id"`
 	Team      Team    `json:"-"`
-	Userinfo  Userinfo `json:"user_info"`
+	Userinfo  Userinfo `json:"-"`
 }

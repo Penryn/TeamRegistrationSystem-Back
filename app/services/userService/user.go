@@ -3,6 +3,8 @@ package userService
 import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/config/database"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 
@@ -110,4 +112,25 @@ func Compare(t1 string, t2 string) bool {
 func UpdataPassword(user models.User)error{
 	result :=database.DB.Model(&user).Update("password",user.Password)
 	return result.Error
+}
+
+func CreateAdministrator()error{
+	var user models.User
+	pwd,err:=Encryption("123")
+	if err!=nil{
+		return err
+	}
+	user=models.User{
+		Name: "Administrator",
+		Permission: 1,
+		Password: pwd,
+	}
+	result := database.DB.Omit("team_id").Create(&user)
+	return result.Error
+}
+
+
+func Encryption(p1 string)([]byte,error){
+	pwd, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.DefaultCost)
+	return pwd,err
 }

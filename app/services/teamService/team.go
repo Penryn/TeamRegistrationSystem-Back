@@ -156,3 +156,4 @@ func Updatacancel(team models.Team)error{
 	result :=database.DB.Model(&team).Update("confirm",0)
 	return result.Error
 }
+

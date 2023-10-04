@@ -119,7 +119,7 @@ func TeamAvatarUpload(c *gin.Context){
 	var team *models.Team
 	team,err=teamService.GetTeamByTeamID(user.TeamID)
 	if err!=nil{
-		utils.JsonInternalServerErrorResponse(c)
+		utils.JsonErrorResponse(c,404,"团队不存在")
 		return
 	}
 	//判断是否为队长

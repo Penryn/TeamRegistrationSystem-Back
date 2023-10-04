@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -56,7 +55,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	//加密
-	pwd, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+	pwd, err :=userService.Encryption(data.Password)
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
@@ -68,6 +67,7 @@ func Register(c *gin.Context) {
 		Phone:    data.Phone,
 		Email:    data.Email,
 		Password: pwd,
+		Permission: 0,
 		Userinfo: models.Userinfo{
 			Name: data.Name,
 			Phone: data.Phone,

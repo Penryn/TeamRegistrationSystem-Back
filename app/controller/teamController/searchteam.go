@@ -30,7 +30,7 @@ func SearchTeam(c *gin.Context){
 		teamList ,err =teamService.GetTeamListByTeamID(n)
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
-				utils.JsonErrorResponse(c, 404, "课程为空")
+				utils.JsonErrorResponse(c, 404, "队伍为不存在")
 				return
 			} else {
 				utils.JsonInternalServerErrorResponse(c)
