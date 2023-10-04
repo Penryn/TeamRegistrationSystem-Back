@@ -11,7 +11,7 @@ import (
 )
 
 type teamID struct{
-	TeamData string `json:"team_data"`
+	TeamData string `json:"team_data"  binding:"required"`
 }
 
 

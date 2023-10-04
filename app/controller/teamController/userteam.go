@@ -10,8 +10,8 @@ import (
 
 //加入团队
 type jointeamdata struct{
-	ID int `json:"id"`
-	TeamPassword string `json:"team_password"`
+	ID int `json:"id"  binding:"required"`
+	TeamPassword string `json:"team_password"  binding:"required"`
 
 }
 
@@ -74,7 +74,7 @@ func JoinTeam(c *gin.Context){
 //退出团队
 
 type leaveteamdata struct{
-	ID int `json:"id"`
+	ID int `json:"id"  binding:"required"`
 
 }
 

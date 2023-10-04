@@ -9,7 +9,7 @@ import (
 )
 
 type signupTeamdata struct{
-	ID int `json:"id"`
+	ID int `json:"id"  binding:"required"`
 }
 
 func SubmitTeam(c *gin.Context){

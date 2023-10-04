@@ -10,9 +10,9 @@ import (
 
 // 创建队伍
 type teamdata struct {
-	TeamName     string `json:"team_name"`
-	Slogan       string `json:"slogan"`
-	TeamPassword string `json:"team_password"`
+	TeamName     string `json:"team_name" binding:"required"`
+	Slogan       string `json:"slogan"  binding:"required"`
+	TeamPassword string `json:"team_password"  binding:"required"`
 }
 
 func CreateTeam(c *gin.Context) {
@@ -65,8 +65,8 @@ func CreateTeam(c *gin.Context) {
 
 // 踢出队员
 type dissmissdata struct {
-	ID     int `json:"id"`
-	UserID int `json:"user_id"`
+	ID     int `json:"id"  binding:"required"`
+	UserID int `json:"user_id"  binding:"required"`
 }
 
 func DismissUser(c *gin.Context) {
@@ -117,7 +117,7 @@ func DismissUser(c *gin.Context) {
 
 // 解散队伍
 type breakteamdata struct {
-	ID int `json:"id"`
+	ID int `json:"id"  binding:"required"`
 }
 
 func BreakTeam(c *gin.Context) {

@@ -14,7 +14,7 @@ import (
 
 //获取团队信息
 type Getteaminfodata struct {
-	ID int `json:"id"`
+	ID int `json:"id"  binding:"required"`
 }
 
 func GetTeamInfo(c *gin.Context) {
@@ -43,9 +43,9 @@ func GetTeamInfo(c *gin.Context) {
 
 //更新基本信息
 type UpdateInfoData struct {
-	ID      int  `json:"id"`
-	TeamName string `json:"team_name"`
-	Slogan   string `json:"slogan"`
+	ID      int  `json:"id"  binding:"required"`
+	TeamName string `json:"team_name"  binding:"required"`
+	Slogan   string `json:"slogan"  binding:"required"`
 }
 
 func UpdateTeamInfo(c *gin.Context) {
