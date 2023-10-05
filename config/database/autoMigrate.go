@@ -11,6 +11,7 @@ func autoMigrate(db *gorm.DB) error {
 		&models.Team{},
 		&models.User{},
 		&models.Userinfo{},
+		&models.Message{},
 	)
 	//db.Model(&models.Team{}).Association("Users")
 

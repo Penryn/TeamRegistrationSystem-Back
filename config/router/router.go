@@ -1,6 +1,7 @@
 package router
 
 import (
+	"TeamRegistrationSystem-Back/app/controller/messageController"
 	"TeamRegistrationSystem-Back/app/controller/teamController"
 	"TeamRegistrationSystem-Back/app/controller/userController"
 	"TeamRegistrationSystem-Back/app/midwares"
@@ -21,6 +22,7 @@ func Init(r *gin.Engine){
 			user.PUT("/info",userController.Updateinfodata)
 			user.PUT("/avatar",userController.AvatarUpload)
 			user.GET("/info",userController.GetUserInfo)
+			user.GET("/message",messageController.GetUserInformation)
 		}
 		team:=api.Group("/team").Use(midwares.JWTAuthMiddleware())
 		{

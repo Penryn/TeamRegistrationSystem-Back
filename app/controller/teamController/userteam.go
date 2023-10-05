@@ -109,6 +109,10 @@ func LeaveTeam(c *gin.Context){
 		utils.JsonErrorResponse(c,200204,"团队已报名,请勿退出")
 		return
 	}
+	if team.CaptainID==v{
+		utils.JsonErrorResponse(c,200204,"你是队长，请不要退出队伍")
+		return
+	}
 	//解除用户与团队的关联
 	err=teamService.LeaveTeam(v,data.ID)
 	if err!=nil{

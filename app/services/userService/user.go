@@ -120,6 +120,10 @@ func CreateAdministrator()error{
 	if err!=nil{
 		return err
 	}
+	err=CheckUserExistByName("Administrator")
+	if err==nil{
+		return nil
+	}
 	user=models.User{
 		Name: "Administrator",
 		Permission: 1,
