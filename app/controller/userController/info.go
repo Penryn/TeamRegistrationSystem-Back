@@ -60,7 +60,7 @@ func Updateinfodata(c *gin.Context) {
 	//判断电话是否符合格式
 	phone_sample:=regexp.MustCompile(`^1[3456789]\d{9}$`)
 	if !phone_sample.MatchString(data.Phone) {
-		utils.JsonErrorResponse(c, 200, "邮箱格式错误")
+		utils.JsonErrorResponse(c, 200, "电话格式错误")
 		return
 	}
 	//查询手机号是否重复
@@ -197,6 +197,11 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 	v, _ := n.(int)
+	terr :=userService.CheckUserExistByUID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
 	var uinfoList []models.Userinfo
 	uinfoList, err := userService.GetInfoList(v)
 	if err != nil {

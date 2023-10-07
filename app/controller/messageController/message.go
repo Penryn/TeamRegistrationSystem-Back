@@ -23,11 +23,6 @@ func GetUserInformation(c *gin.Context){
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
-	v, ok := n.(int)
-	if !ok {
-		utils.JsonErrorResponse(c, 200400, "token断言失败")
-		return
-	}
 	var messageList []models.Message
 	messageList,err:=messageService.GetClassList(v)
 	if err != nil {
