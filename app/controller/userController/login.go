@@ -2,6 +2,7 @@ package userController
 
 //登记
 import (
+	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
@@ -22,7 +23,7 @@ func Login(c *gin.Context) {
 	var data LoginDate
 	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c,200,"参数错误")
+		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)
 		return
 	}
 

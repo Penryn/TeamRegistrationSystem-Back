@@ -128,7 +128,7 @@ func CreateAdministrator()error{
 	if err!=nil{
 		return err
 	}
-	err=CheckUserExistByName("Administrator")
+	err=CheckUserExistByName(uname)
 	if err==nil{
 		return nil
 	}

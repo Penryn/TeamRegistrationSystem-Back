@@ -44,7 +44,7 @@ func Register(c *gin.Context) {
 	//判断电话是否符合格式
 	phone_sample:=regexp.MustCompile(`^1[3456789]\d{9}$`)
 	if !phone_sample.MatchString(data.Phone) {
-		utils.JsonErrorResponse(c, 200, "邮箱格式错误")
+		utils.JsonErrorResponse(c, 200, "电话格式错误")
 		return
 	}
 	//判断密码是否符合格式
