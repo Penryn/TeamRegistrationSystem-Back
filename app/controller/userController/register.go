@@ -5,9 +5,6 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
-	//"encoding/json"
-
-	//"net/url"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
