@@ -23,5 +23,5 @@ func JsonErrorResponse(c *gin.Context, code int, msg string) {
 }
 
 func JsonInternalServerErrorResponse(c *gin.Context) {
-	JsonResponse(c, http.StatusInternalServerError, 400, "Internal server error", nil)
+	JsonResponse(c, http.StatusInternalServerError, 200, "Internal server error", nil)
 }

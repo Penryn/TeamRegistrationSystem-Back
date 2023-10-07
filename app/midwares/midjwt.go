@@ -1,6 +1,7 @@
 package midwares
 
 import (
+	"TeamRegistrationSystem-Back/config/config"
 	"errors"
 	"net/http"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var Secret = []byte("xyz")
 
 
 type Claims struct{
@@ -19,6 +19,8 @@ type Claims struct{
 }
 
 func ParseToken(tokenStr string)(*Claims,error){
+	secret :=config.Config.GetString("jwt.pass")
+	var Secret = []byte(secret)
 	token,err:=jwt.ParseWithClaims(tokenStr,&Claims{},func (token *jwt.Token)(interface{},error){
 		return Secret,nil
 	} )

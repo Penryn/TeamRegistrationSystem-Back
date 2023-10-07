@@ -17,3 +17,7 @@ func GetClassList(userID int) ([]models.Message, error) {
 	}
 	return messageList, nil
 }
+func CheckUserExistByUID(uid int) error {
+	result := database.DB.Where("user_id = ?", uid).First(&models.User{})
+	return result.Error
+}

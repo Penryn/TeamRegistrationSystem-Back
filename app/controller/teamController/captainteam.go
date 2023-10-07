@@ -1,6 +1,7 @@
 package teamController
 
 import (
+	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/teamService"
 	"TeamRegistrationSystem-Back/app/utils"
@@ -19,20 +20,20 @@ func CreateTeam(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
-		utils.JsonErrorResponse(c, 200400, "token获取失败")
+		utils.JsonErrorResponse(c, 200, "token获取失败")
 		return
 	}
-	v, ok := n.(int)
-	if !ok {
-		utils.JsonErrorResponse(c, 200400, "token断言失败")
+	v, _ := n.(int)
+	terr :=teamService.CheckUserExistByUID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
-
 	//接受传参
 	var data teamdata
 	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c, 400, "参数错误")
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//判断有无团队
@@ -73,19 +74,20 @@ func DismissUser(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
-		utils.JsonErrorResponse(c, 200400, "token获取失败")
+		utils.JsonErrorResponse(c, 200, "token获取失败")
 		return
 	}
-	v, ok := n.(int)
-	if !ok {
-		utils.JsonErrorResponse(c, 200400, "token断言失败")
+	v, _ := n.(int)
+	terr :=teamService.CheckUserExistByUID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//获取参数
 	var data dissmissdata
 	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c, 400, "参数错误")
+		utils.JsonErrorResponse(c, 200, "apiExpection.ParamError.Msg")
 		return
 	}
 	//获取团队信息
@@ -98,7 +100,7 @@ func DismissUser(c *gin.Context) {
 	//判断是否为队长
 	flag := teamService.ComPaRe(team.CaptainID, v)
 	if !flag {
-		utils.JsonErrorResponse(c, 200204, "你不是队长，权限不足")
+		utils.JsonErrorResponse(c, 200204, "权限不足")
 		return
 	}
 	if team.Confirm != 0 {
@@ -124,19 +126,20 @@ func BreakTeam(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
-		utils.JsonErrorResponse(c, 200400, "token获取失败")
+		utils.JsonErrorResponse(c, 200, "token获取失败")
 		return
 	}
-	v, ok := n.(int)
-	if !ok {
-		utils.JsonErrorResponse(c, 200400, "token断言失败")
+	v, _ := n.(int)
+	terr :=teamService.CheckUserExistByUID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//获取参数
 	var data breakteamdata
 	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c, 400, "参数错误")
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//获取团队信息
@@ -149,7 +152,7 @@ func BreakTeam(c *gin.Context) {
 	//判断是否为队长
 	flag := teamService.ComPaRe(team.CaptainID, v)
 	if !flag {
-		utils.JsonErrorResponse(c, 200204, "你不是队长，权限不足")
+		utils.JsonErrorResponse(c, 200, "权限不足")
 		return
 	}
 	if team.Confirm != 0 {

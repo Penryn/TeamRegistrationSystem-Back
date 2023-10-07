@@ -1,6 +1,7 @@
 package messageController
 
 import (
+	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/messageService"
 	"TeamRegistrationSystem-Back/app/utils"
@@ -10,9 +11,16 @@ import (
 )
 
 func GetUserInformation(c *gin.Context){
+	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
-		utils.JsonErrorResponse(c, 200400, "token获取失败")
+		utils.JsonErrorResponse(c, 200, "token获取失败")
+		return
+	}
+	v, _ := n.(int)
+	terr :=messageService.CheckUserExistByUID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	v, ok := n.(int)

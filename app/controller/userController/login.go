@@ -22,7 +22,7 @@ func Login(c *gin.Context) {
 	var data LoginDate
 	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c,400,"参数错误")
+		utils.JsonErrorResponse(c,200,"参数错误")
 		return
 	}
 
@@ -31,7 +31,7 @@ func Login(c *gin.Context) {
 	err = userService.CheckUserExistByAccount(data.Account)
 	if err!=nil{
 		if err ==gorm.ErrRecordNotFound{
-			utils.JsonErrorResponse(c,401,"用户不存在")
+			utils.JsonErrorResponse(c,200,"用户不存在")
 		}else{
 			utils.JsonInternalServerErrorResponse(c)
 		}
@@ -49,7 +49,7 @@ func Login(c *gin.Context) {
 	//判断密码是否正确
 	flag :=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(data.Password))
 	if flag !=nil{
-		utils.JsonErrorResponse(c,402,"密码错误")
+		utils.JsonErrorResponse(c,200,"密码错误")
 		return
 	}
 	token ,err:=utils.GenToken(user.UserID)
@@ -61,18 +61,17 @@ func Login(c *gin.Context) {
 	type ulogin struct{
 		UserID int `json:"user_id"`
 		Name   string `json:"name"`
-		Token   string `jsonL:"token"`
+		Token   string `json:"token"`
 	}
-	var nn ulogin
-
-	nn.Name=user.Name
-	nn.Token=token
-	nn.UserID=user.UserID
 
 	c.JSON(http.StatusOK,gin.H{
 		"code":200,
 		"msg":"ok",
-		"data":nn,
+		"data":ulogin{
+			Name:user.Name,
+			Token:token,
+			UserID:user.UserID,
+		},
 
 	})
 

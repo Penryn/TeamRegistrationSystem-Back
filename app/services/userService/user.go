@@ -2,11 +2,17 @@ package userService
 
 import (
 	"TeamRegistrationSystem-Back/app/models"
+	"TeamRegistrationSystem-Back/config/config"
 	"TeamRegistrationSystem-Back/config/database"
+	"unicode"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
+func CheckUserExistByUID(uid int) error {
+	result := database.DB.Where("user_id = ?", uid).First(&models.User{})
+	return result.Error
+}
 
 func CheckUserExistByPhone(pHone string) error {
 	result := database.DB.Where("phone = ?", pHone).First(&models.User{})
@@ -115,8 +121,10 @@ func UpdataPassword(user models.User)error{
 }
 
 func CreateAdministrator()error{
+	uname:=config.Config.GetString("Administrator.Name")
+	upass:=config.Config.GetString("Administrator.Pass")
 	var user models.User
-	pwd,err:=Encryption("123")
+	pwd,err:=Encryption(upass)
 	if err!=nil{
 		return err
 	}
@@ -125,7 +133,7 @@ func CreateAdministrator()error{
 		return nil
 	}
 	user=models.User{
-		Name: "Administrator",
+		Name: uname,
 		Permission: 1,
 		Password: pwd,
 	}
@@ -137,4 +145,33 @@ func CreateAdministrator()error{
 func Encryption(p1 string)([]byte,error){
 	pwd, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.DefaultCost)
 	return pwd,err
+}
+
+func IsValidPassword(password string) bool {
+	// 检查密码长度是否在8到25之间
+	if len(password) < 8 || len(password) > 25 {
+		return false
+	}
+
+	// 检查密码是否同时包含数字、字母和特殊字符
+	hasDigit := false
+	hasLetter := false
+	hasSpecial := false
+
+	for _, char := range password {
+		if unicode.IsDigit(char) {
+			hasDigit = true
+		} else if unicode.IsLetter(char) {
+			hasLetter = true
+		} else if !unicode.IsSpace(char) {
+			hasSpecial = true
+		}
+
+		// 如果同时包含数字、字母和特殊字符，则密码有效
+		if hasDigit && hasLetter && hasSpecial {
+			return true
+		}
+	}
+
+	return false
 }

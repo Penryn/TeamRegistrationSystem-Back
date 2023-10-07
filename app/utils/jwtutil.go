@@ -3,11 +3,11 @@ package utils
 import (
 	"errors"
 	"time"
+	"TeamRegistrationSystem-Back/config/config"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-var Secret = []byte("xyz")
 
 // jwt过期时间
 const expiration = time.Hour*2
@@ -19,6 +19,8 @@ type Claims struct{
 
 func GenToken(userid int)(string,error){
 	//创建声明
+	secret :=config.Config.GetString("jwt.pass")
+	var Secret = []byte(secret)
 	a:=Claims{
 		UserID:userid,
 		StandardClaims: jwt.StandardClaims{
@@ -38,6 +40,8 @@ func GenToken(userid int)(string,error){
 }
 
 func ParseToken(tokenStr string)(*Claims,error){
+	secret :=config.Config.GetString("jwt.pass")
+	var Secret = []byte(secret)
 	token,err:=jwt.ParseWithClaims(tokenStr,&Claims{},func (token *jwt.Token)(interface{},error){
 		return Secret,nil
 	} )

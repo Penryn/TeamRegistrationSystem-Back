@@ -1,6 +1,7 @@
 package teamController
 
 import (
+	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/teamService"
 	"TeamRegistrationSystem-Back/app/utils"
@@ -20,7 +21,7 @@ func SearchTeam(c *gin.Context){
 	var data teamID
 	err:=c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c,400,"参数错误")
+		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)
 		return
 	}
 	n,er := strconv.Atoi(data.TeamData)
@@ -30,7 +31,7 @@ func SearchTeam(c *gin.Context){
 		teamList ,err =teamService.GetTeamListByTeamID(n)
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
-				utils.JsonErrorResponse(c, 404, "队伍为不存在")
+				utils.JsonErrorResponse(c, 200, "队伍为不存在")
 				return
 			} else {
 				utils.JsonInternalServerErrorResponse(c)
@@ -46,7 +47,7 @@ func SearchTeam(c *gin.Context){
 		teamList ,err =teamService.GetTeamListByTeamName(data.TeamData)
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
-				utils.JsonErrorResponse(c, 404, "队伍不存在")
+				utils.JsonErrorResponse(c, 200, "队伍不存在")
 				return
 			} else {
 				utils.JsonInternalServerErrorResponse(c)

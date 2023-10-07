@@ -1,6 +1,7 @@
 package userController
 
 import (
+	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
@@ -21,34 +22,37 @@ func Retrieve(c *gin.Context) {
 	var data Userpassword
 	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c,400,"参数错误")
+		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)
 		return
 	}
-	//判断用户是否存在
-	err = userService.CheckUserExistByName(data.Name)
-	if err != nil {
-		utils.JsonErrorResponse(c, 400, "用户不存在")
-		return
-	} 
 	//获取用户信息
 	var user *models.User
 	user,err=userService.GetUserByName(data.Name)
 	if err !=nil{
-		utils.JsonInternalServerErrorResponse(c)
+		utils.JsonErrorResponse(c, 200, "用户不存在")
+		return
+	}
+	if user.Permission==1{
+		utils.JsonErrorResponse(c, 200, "权限不足")
+		return
+	}
+	//判断密码是否符合格式
+	if !userService.IsValidPassword(data.Password){
+		utils.JsonErrorResponse(c, 200, "密码格式错误")
 		return
 	}
 	flag1:=userService.Compare(data.Email,user.Email)
 	flag2:=userService.Compare(data.Phone,user.Phone)
 	flag3:=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(data.Password))
 	if !flag1||!flag2{
-		utils.JsonErrorResponse(c,200220,"手机号或邮箱错误")
+		utils.JsonErrorResponse(c,200,"手机号或邮箱错误")
 		return
 	}
 	if flag3 ==nil{
-		utils.JsonErrorResponse(c,402,"密码与前一次相同")
+		utils.JsonErrorResponse(c,200,"密码与前一次相同")
 		return
 	}
-	pwd, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+	pwd, err := userService.Encryption(data.Password)
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
