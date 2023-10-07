@@ -2,7 +2,7 @@ package models
 
 type Userinfo struct {
 	ID       int    `json:"-" `
-	UserID   int    `json:"user_id"`
+	UserID   int    `json:"-"`
 	Name     string `json:"name"`
 	Phone    string `json:"phone"`
 	Email    string `json:"email"`

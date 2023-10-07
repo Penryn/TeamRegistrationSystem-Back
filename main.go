@@ -16,6 +16,7 @@ func main() {
 	database.Init()
 	r := gin.Default()
 	r.Use(cors.Default())
+	r.Use(midwares.Corss)
 	r.Use(midwares.RateLimitMiddleware(time.Second,100,100))
 	r.Use(midwares.ErrHandler())
 	r.NoMethod(midwares.HandleNotFound)

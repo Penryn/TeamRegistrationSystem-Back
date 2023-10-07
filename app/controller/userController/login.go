@@ -60,7 +60,6 @@ func Login(c *gin.Context) {
 	}
 
 	type ulogin struct{
-		UserID int `json:"user_id"`
 		Name   string `json:"name"`
 		Token   string `json:"token"`
 	}
