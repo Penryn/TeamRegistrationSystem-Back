@@ -50,7 +50,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	// 判断手机号是否已经注册
-	err = userService.CheckUserExistByPhone(data.Phone)
+	err = userService.CheckUserExistByPhone(data.Phone,)
 	if err == nil {
 		utils.JsonErrorResponse(c, 200, "手机号已注册")
 		return

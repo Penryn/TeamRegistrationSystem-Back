@@ -67,11 +67,10 @@ func Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK,gin.H{
 		"code":200,
-		"msg":"ok",
+		"msg":"登录成功",
 		"data":ulogin{
 			Name:user.Name,
 			Token:token,
-			UserID:user.UserID,
 		},
 
 	})

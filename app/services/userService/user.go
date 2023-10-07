@@ -19,8 +19,8 @@ func CheckUserExistByPhone(pHone string) error {
 	return result.Error
 }
 
-func CheckUserinfoExistByPhone(pHone string) error {
-	result := database.DB.Where("phone = ?", pHone).First(&models.Userinfo{})
+func CheckUserinfoExistByPhone(pHone string,uid int) error {
+	result := database.DB.Not("user_id=?",uid).Where("phone = ?", pHone).First(&models.Userinfo{})
 	return result.Error
 }
 
@@ -29,8 +29,8 @@ func CheckUserExistByEmail(eMail string) error {
 	return result.Error
 }
 
-func CheckUserinfoExistByEmail(eMail string) error {
-	result := database.DB.Where("email = ?", eMail).First(&models.Userinfo{})
+func CheckUserinfoExistByEmail(eMail string,uid int) error {
+	result := database.DB.Not("user_id=?",uid).Where("email = ?", eMail).First(&models.Userinfo{})
 	return result.Error
 }
 
@@ -39,8 +39,8 @@ func CheckUserExistByName(naMe string) error {
 	return result.Error
 }
 
-func CheckUserinfoExistByName(naMe string) error {
-	result := database.DB.Where("name = ?", naMe).First(&models.Userinfo{})
+func CheckUserinfoExistByName(naMe string,uid int) error {
+	result := database.DB.Not("user_id=?",uid).Where("name = ?", naMe).First(&models.Userinfo{})
 	return result.Error
 }
 
@@ -153,25 +153,20 @@ func IsValidPassword(password string) bool {
 		return false
 	}
 
-	// 检查密码是否同时包含数字、字母和特殊字符
-	hasDigit := false
+	// 检查密码是否同时包含字母和数字
 	hasLetter := false
-	hasSpecial := false
+	hasDigit := false
 
 	for _, char := range password {
-		if unicode.IsDigit(char) {
-			hasDigit = true
-		} else if unicode.IsLetter(char) {
-			hasLetter = true
-		} else if !unicode.IsSpace(char) {
-			hasSpecial = true
-		}
-
-		// 如果同时包含数字、字母和特殊字符，则密码有效
-		if hasDigit && hasLetter && hasSpecial {
-			return true
-		}
+  		if unicode.IsLetter(char) {
+    		hasLetter = true
+  		} else if unicode.IsDigit(char) {
+    		hasDigit = true
+  		}
 	}
-
+  	// 如果同时包含字母和数字，则密码有效
+  	if hasLetter && hasDigit {
+    	return true
+  	}
 	return false
 }

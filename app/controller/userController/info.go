@@ -64,7 +64,7 @@ func Updateinfodata(c *gin.Context) {
 		return
 	}
 	//查询手机号是否重复
-	err = userService.CheckUserinfoExistByPhone(data.Phone)
+	err = userService.CheckUserinfoExistByPhone(data.Phone,v)
 	if err == nil {
 		utils.JsonErrorResponse(c, 200, "手机号已存在")
 		return
@@ -73,7 +73,7 @@ func Updateinfodata(c *gin.Context) {
 		return
 	}
 	//查询邮箱是否重复注册
-	err = userService.CheckUserinfoExistByEmail(data.Email)
+	err = userService.CheckUserinfoExistByEmail(data.Email,v)
 	if err == nil {
 		utils.JsonErrorResponse(c, 400, "邮箱已存在")
 		return
@@ -82,7 +82,7 @@ func Updateinfodata(c *gin.Context) {
 		return
 	}
 	//查询用户名是否存在
-	err = userService.CheckUserinfoExistByName(data.Name)
+	err = userService.CheckUserinfoExistByName(data.Name,v)
 	if err == nil {
 		utils.JsonErrorResponse(c, 400, "用户名已存在")
 		return
