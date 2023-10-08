@@ -27,8 +27,6 @@ func Sendmail(c *gin.Context){
 		utils.JsonErrorResponse(c, 200, "请求频率过高，请稍后再试")
 		return
 	}
-	// 将当前时间设置为最新的请求时间
-	lastRequestTime = currentTime
 	//接收数据
 	var data Emaildata
 	err := c.ShouldBindJSON(&data)
@@ -60,6 +58,8 @@ func Sendmail(c *gin.Context){
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
+	// 将当前时间设置为最新的请求时间
+	lastRequestTime = currentTime
 	utils.JsonSuccessResponse(c, nil)
 
 }

@@ -67,6 +67,15 @@ func GetUserByAccount(aCCount string) (*models.User, error) {
 	return &user, nil
 }
 
+func GetUserInfoByUserID(uid int) (*models.Userinfo, error) {
+	var user models.Userinfo
+	result := database.DB.Where("user_id = ?", uid).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
 func Register(user models.User) error {
 	result := database.DB.Omit("team_id").Create(&user)
 	return result.Error
@@ -101,19 +110,6 @@ func GetInfoList(userID int) ([]models.Userinfo, error) {
 	}
 	return infoList, nil
 }
-
-// func GetInfolist(userID int) (models.Userinfo, error) {
-// 	result := database.DB.Where("user_id=?", userID).Find(&models.Userinfo{})
-// 	if result.Error != nil {
-// 		return nil, result.Error
-// 	}
-// 	var infoList models.Userinfo
-// 	result = database.DB.Where("user_id=?", userID).Find(&infoList)
-// 	if result.Error != nil {
-// 		return nil, result.Error
-// 	}
-// 	return infoList, nil
-// }
 
 func GetUserByName(nAme string)(*models.User,error){
 	var user models.User
