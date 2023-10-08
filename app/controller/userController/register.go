@@ -5,6 +5,7 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
+	"TeamRegistrationSystem-Back/config/config"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -82,6 +83,7 @@ func Register(c *gin.Context) {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
+	avatar:=config.Config.GetString("avatar.url")
 
 	// 注册用户
 	err = userService.Register(models.User{
@@ -94,6 +96,7 @@ func Register(c *gin.Context) {
 			Name: data.Name,
 			Phone: data.Phone,
 			Email: data.Email,
+			Avatar: avatar,
 		},
 	})
 	if err != nil {

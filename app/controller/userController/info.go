@@ -122,6 +122,11 @@ func AvatarUpload(c *gin.Context) {
 		return
 	}
 	v, _ := n.(int)
+	terr :=userService.CheckUserExistByUID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
 	//保存图片文件
 	file, err := c.FormFile("image")
 	if err != nil {
@@ -214,6 +219,6 @@ func GetUserInfo(c *gin.Context) {
 		}
 	}
 	utils.JsonSuccessResponse(c, gin.H{
-		"user_info": uinfoList,
+		"user_info": uinfoList[0],
 	})
 }

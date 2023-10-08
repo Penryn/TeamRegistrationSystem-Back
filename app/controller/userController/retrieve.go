@@ -15,6 +15,7 @@ type Userpassword struct {
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
+	Code     string `json:"code"`
 }
 
 func Retrieve(c *gin.Context) {
@@ -43,13 +44,18 @@ func Retrieve(c *gin.Context) {
 	}
 	flag1:=userService.Compare(data.Email,user.Email)
 	flag2:=userService.Compare(data.Phone,user.Phone)
-	flag3:=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(data.Password))
+	flag3:=userService.Compare(data.Code,user.Code)
+	flag4:=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(data.Password))
 	if !flag1||!flag2{
 		utils.JsonErrorResponse(c,200,"手机号或邮箱错误")
 		return
 	}
-	if flag3 ==nil{
+	if flag4 ==nil{
 		utils.JsonErrorResponse(c,200,"密码与前一次相同")
+		return
+	}
+	if !flag3{
+		utils.JsonErrorResponse(c,200,"验证码错误")
 		return
 	}
 	pwd, err := userService.Encryption(data.Password)

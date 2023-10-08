@@ -102,6 +102,19 @@ func GetInfoList(userID int) ([]models.Userinfo, error) {
 	return infoList, nil
 }
 
+// func GetInfolist(userID int) (models.Userinfo, error) {
+// 	result := database.DB.Where("user_id=?", userID).Find(&models.Userinfo{})
+// 	if result.Error != nil {
+// 		return nil, result.Error
+// 	}
+// 	var infoList models.Userinfo
+// 	result = database.DB.Where("user_id=?", userID).Find(&infoList)
+// 	if result.Error != nil {
+// 		return nil, result.Error
+// 	}
+// 	return infoList, nil
+// }
+
 func GetUserByName(nAme string)(*models.User,error){
 	var user models.User
 	result :=database.DB.Where("name = ?",nAme).First(&user)
@@ -110,6 +123,16 @@ func GetUserByName(nAme string)(*models.User,error){
 	}
 	return &user, nil
 }
+
+func GetUserByEmail(mail string)(*models.User,error){
+	var user models.User
+	result :=database.DB.Where("email = ?",mail).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
 
 func Compare(t1 string, t2 string) bool {
 	return t1 == t2
@@ -169,4 +192,10 @@ func IsValidPassword(password string) bool {
     	return true
   	}
 	return false
+}
+
+
+func UpdataCode(user models.User)error{
+	result :=database.DB.Model(&user).Update("code",user.Code)
+	return result.Error
 }

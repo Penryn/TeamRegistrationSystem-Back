@@ -10,13 +10,13 @@ import (
 )
 
 func Init(r *gin.Engine){
-	r.POST("/login",userController.Login)
-	r.POST("/reg",userController.Register)
-	r.PUT("/ret",userController.Retrieve)
 	const pre = "/api"
 
 	api:=r.Group(pre)
-	{	
+	{	api.POST("/login",userController.Login)
+		api.POST("/reg",userController.Register)
+		api.PUT("/ret",userController.Retrieve)
+		api.POST("/email",userController.Sendmail)
 		user:=api.Group("/user").Use(midwares.JWTAuthMiddleware())
 		{
 			user.PUT("/info",userController.Updateinfodata)
