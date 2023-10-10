@@ -19,7 +19,7 @@ type teamID struct{
 func SearchTeam(c *gin.Context){
 	//接受参数
 	var data teamID
-	err:=c.ShouldBindJSON(&data)
+	err:=c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)
 		return

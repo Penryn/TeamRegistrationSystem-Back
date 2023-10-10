@@ -5,6 +5,7 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -18,25 +19,25 @@ import (
 )
 
 type uinfo struct {
-	Name     string `json:"name"`
-	Phone    string `json:"phone"`
-	Email    string `json:"email"`
-	Birthday string `json:"birthday"`
-	Address  string `json:"address"`
-	Motto    string `json:"motto"`
+	Name     string `json:"name"  binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Birthday string `json:"birthday" binding:"required"`
+	Address  string `json:"address" binding:"required"`
+	Motto    string `json:"motto" binding:"required"`
 }
 
 func Updateinfodata(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
-		utils.JsonErrorResponse(c, 200400, "token获取失败")
+		utils.JsonErrorResponse(c, 200, "token获取失败")
 		return
 	}
 	v, _ := n.(int)
 	terr :=userService.CheckUserExistByUID(v)
 	if terr !=nil{
-		utils.JsonErrorResponse(c, 400, apiExpection.ParamError.Msg)
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	var data uinfo
@@ -75,7 +76,7 @@ func Updateinfodata(c *gin.Context) {
 	//查询邮箱是否重复注册
 	err = userService.CheckUserinfoExistByEmail(data.Email,v)
 	if err == nil {
-		utils.JsonErrorResponse(c, 400, "邮箱已存在")
+		utils.JsonErrorResponse(c, 200, "邮箱已存在")
 		return
 	} else if err != nil && err != gorm.ErrRecordNotFound {
 		utils.JsonInternalServerErrorResponse(c)
@@ -84,7 +85,7 @@ func Updateinfodata(c *gin.Context) {
 	//查询用户名是否存在
 	err = userService.CheckUserinfoExistByName(data.Name,v)
 	if err == nil {
-		utils.JsonErrorResponse(c, 400, "用户名已存在")
+		utils.JsonErrorResponse(c, 200, "用户名已存在")
 		return
 	} else if err != nil && err != gorm.ErrRecordNotFound {
 		utils.JsonInternalServerErrorResponse(c)
@@ -191,24 +192,33 @@ func AvatarUpload(c *gin.Context) {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
-	utils.JsonSuccessResponse(c, nil)
+	utils.JsonSuccessResponse(c, gin.H{
+		"avatar":url,
+	})
+}
+
+
+type GetInfoData struct{
+	Name string `form:"name" binding:"required"`
 }
 
 func GetUserInfo(c *gin.Context) {
-	//获取用户身份token
-	n, er := c.Get("UserID")
-	if !er {
-		utils.JsonErrorResponse(c, 200, "token获取失败")
-		return
-	}
-	v, _ := n.(int)
-	terr :=userService.CheckUserExistByUID(v)
-	if terr !=nil{
+	var data GetInfoData
+	er :=c.ShouldBindQuery(&data)
+	if er != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
+	var user *models.User
+	user,er= userService.GetUserByName(data.Name)
+	if er != nil {
+		utils.JsonErrorResponse(c,200,"查无此人")
+		fmt.Println(data.Name)
+		fmt.Println(1)
+		return
+	}
 	var uinfoList []models.Userinfo
-	uinfoList, err := userService.GetInfoList(v)
+	uinfoList, err := userService.GetInfoList(user.UserID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			utils.JsonErrorResponse(c, 200, "查无此人")

@@ -27,7 +27,7 @@ func GetUserInformation(c *gin.Context){
 	messageList,err:=messageService.GetClassList(v)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			utils.JsonErrorResponse(c, 404, "消息为空")
+			utils.JsonErrorResponse(c, 200, "消息为空")
 			return
 		} else {
 			utils.JsonInternalServerErrorResponse(c)

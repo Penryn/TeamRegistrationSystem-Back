@@ -100,11 +100,11 @@ func DismissUser(c *gin.Context) {
 	//判断是否为队长
 	flag := teamService.ComPaRe(team.CaptainID, v)
 	if !flag {
-		utils.JsonErrorResponse(c, 200204, "权限不足")
+		utils.JsonErrorResponse(c, 200, "权限不足")
 		return
 	}
 	if team.Confirm != 0 {
-		utils.JsonErrorResponse(c, 200204, "该团队已报名,请不要踢队友")
+		utils.JsonErrorResponse(c, 200, "该团队已报名,请不要踢队友")
 		return
 	}
 	//解除用户与团队的关联
@@ -156,7 +156,7 @@ func BreakTeam(c *gin.Context) {
 		return
 	}
 	if team.Confirm != 0 {
-		utils.JsonErrorResponse(c, 200204, "该团队已报名,请先取消报名")
+		utils.JsonErrorResponse(c, 200, "该团队已报名,请先取消报名")
 		return
 	}
 	//删除队伍
