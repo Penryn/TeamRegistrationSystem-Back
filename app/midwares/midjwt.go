@@ -21,6 +21,9 @@ type Claims struct{
 func ParseToken(tokenStr string)(*Claims,error){
 	secret :=config.Config.GetString("jwt.pass")
 	var Secret = []byte(secret)
+	if len(tokenStr) > 7 && tokenStr[:7] == "Bearer " {
+        tokenStr = tokenStr[7:]
+    }
 	token,err:=jwt.ParseWithClaims(tokenStr,&Claims{},func (token *jwt.Token)(interface{},error){
 		return Secret,nil
 	} )
@@ -33,7 +36,6 @@ func ParseToken(tokenStr string)(*Claims,error){
 	}
 	return nil,errors.New("invalid token")
 }
-
 func JWTAuthMiddleware()func(c *gin.Context){
 	return func(c *gin.Context) {
 		tokenStr:=c.Request.Header.Get("Authorization")

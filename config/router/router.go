@@ -20,7 +20,7 @@ func Init(r *gin.Engine){
 		user:=api.Group("/user").Use(midwares.JWTAuthMiddleware())
 		{
 			user.PUT("/info",userController.Updateinfodata)
-			user.PUT("/avatar",userController.AvatarUpload)
+			user.POST("/avatar",userController.AvatarUpload)
 			user.GET("/info",userController.GetUserInfo)
 			user.GET("/message",messageController.GetUserInformation)
 		}
@@ -36,7 +36,7 @@ func Init(r *gin.Engine){
 			team.PUT("/info",teamController.UpdateTeamInfo)
 			team.PUT("/cancel",teamController.CancelTeam)
 			team.PUT("/submit",teamController.SubmitTeam)
-			team.PUT("/avatar",teamController.TeamAvatarUpload)
+			team.POST("/avatar",teamController.TeamAvatarUpload)
 			
 		}
 

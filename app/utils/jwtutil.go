@@ -35,13 +35,20 @@ func GenToken(userid int)(string,error){
 
 	//哈希方法创建签名
 	tt:=jwt.NewWithClaims(jwt.SigningMethodHS256,a)
-	return tt.SignedString(Secret)
+	tokenString, err := tt.SignedString(Secret)
+    if err != nil {
+        return "", err
+    }
+    return "Bearer " + tokenString, nil
 
 }
 
 func ParseToken(tokenStr string)(*Claims,error){
 	secret :=config.Config.GetString("jwt.pass")
 	var Secret = []byte(secret)
+	if len(tokenStr) > 7 && tokenStr[:7] == "Bearer " {
+        tokenStr = tokenStr[7:]
+    }
 	token,err:=jwt.ParseWithClaims(tokenStr,&Claims{},func (token *jwt.Token)(interface{},error){
 		return Secret,nil
 	} )

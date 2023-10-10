@@ -3,9 +3,9 @@ package userController
 import (
 	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
+	"TeamRegistrationSystem-Back/app/services/avatarService"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
-	"TeamRegistrationSystem-Back/config/config"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -83,7 +83,7 @@ func Register(c *gin.Context) {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
-	avatar:=config.Config.GetString("avatar.url")
+	avatar:=avatarService.EmailToCravatarURL(data.Email)
 
 	// 注册用户
 	err = userService.Register(models.User{

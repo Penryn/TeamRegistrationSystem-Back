@@ -186,14 +186,14 @@ func AvatarUpload(c *gin.Context) {
 	}
 	err = userService.UpdataAvatar(models.Userinfo{
 		ID:     user.ID,
-		Avatar: url,
+		Avatar: "http://"+url,
 	})
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
 	utils.JsonSuccessResponse(c, gin.H{
-		"avatar":url,
+		"avatar":"http://"+url,
 	})
 }
 
