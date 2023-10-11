@@ -36,12 +36,14 @@ func ParseToken(tokenStr string)(*Claims,error){
 	}
 	return nil,errors.New("invalid token")
 }
+
+
 func JWTAuthMiddleware()func(c *gin.Context){
 	return func(c *gin.Context) {
 		tokenStr:=c.Request.Header.Get("Authorization")
 		if tokenStr ==""{
 			c.AbortWithStatusJSON(http.StatusUnauthorized,gin.H{
-				"code":200206,
+				"code":200,
 				"msg":"auth is null",
 
 			})
@@ -52,7 +54,7 @@ func JWTAuthMiddleware()func(c *gin.Context){
 		parts:=strings.Split(tokenStr,".")
 		if len(parts)!=3{
 			c.JSON(http.StatusUnauthorized,gin.H{
-				"code":200207,
+				"code":200,
 				"msg":"auth is error",
 			})
 			c.Abort()
@@ -61,14 +63,14 @@ func JWTAuthMiddleware()func(c *gin.Context){
 		mc,err:=ParseToken(tokenStr)
 		if err !=nil{
 			c.JSON(http.StatusUnauthorized,gin.H{
-				"code":200208,
+				"code":200,
 				"msg":"Token is not vaild",
 			})
 			c.Abort()
 			return
 		}else if time.Now().Unix()>mc.ExpiresAt{
 			c.AbortWithStatusJSON(http.StatusUnauthorized,gin.H{
-				"code":200209,
+				"code":200,
 				"msg": "Token is overdue",
 			})
 			c.Abort()

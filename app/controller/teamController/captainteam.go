@@ -68,6 +68,7 @@ func CreateTeam(c *gin.Context) {
 		TeamPassword: data.TeamPassword,
 		Confirm:      0,
 		CaptainID:    v,
+		CaptainName: user.Name,
 		Number:       1,
 		Avatar:      user.Avatar,
 	})

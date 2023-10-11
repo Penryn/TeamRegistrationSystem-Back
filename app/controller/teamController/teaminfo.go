@@ -18,12 +18,12 @@ import (
 
 //获取团队信息
 type Getteaminfodata struct {
-	ID int `json:"id"  binding:"required"`
+	ID int `form:"id"  binding:"required"`
 }
 
 func GetTeamInfo(c *gin.Context) {
 	var data Getteaminfodata
-	err := c.ShouldBindJSON(&data)
+	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
