@@ -5,6 +5,7 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/teamService"
 	"TeamRegistrationSystem-Back/app/utils"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,7 +48,20 @@ func CreateTeam(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "你已有团队")
 		return
 	}
-
+	//判断是否符合格式
+	name_sample:=regexp.MustCompile(`^.*\D.*$`)
+	if !name_sample.MatchString(data.TeamName)&&len(data.TeamName)>10 {
+		utils.JsonErrorResponse(c, 200, "队伍名称格式错误")
+		return
+	}
+	if len(data.Slogan)>1000 {
+		utils.JsonErrorResponse(c, 200, "队伍口号格式错误")
+		return
+	}
+	if len(data.TeamPassword)>25 {
+		utils.JsonErrorResponse(c, 200, "队伍密码格式错误")
+		return
+	}
 	err = teamService.CreateTeam(models.Team{
 		TeamName:     data.TeamName,
 		Slogan:       data.Slogan,
@@ -55,6 +69,7 @@ func CreateTeam(c *gin.Context) {
 		Confirm:      0,
 		CaptainID:    v,
 		Number:       1,
+		Avatar:      user.Avatar,
 	})
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)

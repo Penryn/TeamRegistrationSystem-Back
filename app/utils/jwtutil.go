@@ -39,7 +39,7 @@ func GenToken(userid int)(string,error){
     if err != nil {
         return "", err
     }
-    return "Bearer " + tokenString, nil
+    return tokenString, nil
 
 }
 

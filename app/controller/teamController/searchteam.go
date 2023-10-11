@@ -11,14 +11,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type teamID struct{
-	TeamData string `json:"team_data"  binding:"required"`
+type teamd struct{
+	TeamData string `form:"team_data"  binding:"required"`
 }
 
 
 func SearchTeam(c *gin.Context){
 	//接受参数
-	var data teamID
+	var data teamd
 	err:=c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)

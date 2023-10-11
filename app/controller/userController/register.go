@@ -92,6 +92,7 @@ func Register(c *gin.Context) {
 		Email:    data.Email,
 		Password: pwd,
 		Permission: 0,
+		Avatar: avatar,
 		Userinfo: models.Userinfo{
 			Name: data.Name,
 			Phone: data.Phone,

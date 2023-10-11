@@ -44,13 +44,6 @@ func Login(c *gin.Context) {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
-	//获取用户详细信息
-	var info *models.Userinfo
-	info, err = userService.GetUserInfoByUserID(user.UserID)
-	if err != nil {
-		utils.JsonInternalServerErrorResponse(c)
-		return
-	}
 
 	//判断密码是否正确
 	flag := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(data.Password))
@@ -76,7 +69,7 @@ func Login(c *gin.Context) {
 		"data": ulogin{
 			Name:  user.Name,
 			Token: token,
-			Avatar: info.Avatar,
+			Avatar: user.Avatar,
 		},
 	})
 

@@ -40,7 +40,7 @@ func GetTeamInfo(c *gin.Context) {
 		}
 	}
 	utils.JsonSuccessResponse(c, gin.H{
-		"class_list": TeamInfoList,
+		"team_list": TeamInfoList[0],
 	})
 
 }
