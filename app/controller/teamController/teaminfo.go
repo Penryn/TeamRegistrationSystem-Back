@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -85,6 +86,16 @@ func UpdateTeamInfo(c *gin.Context) {
 		utils.JsonErrorResponse(c,200,"你不是队长，权限不足")
 		return
 	}
+		//判断是否符合格式
+		name_sample:=regexp.MustCompile(`^.*\D.*$`)
+		if !name_sample.MatchString(data.TeamName)&&len(data.TeamName)>10 {
+			utils.JsonErrorResponse(c, 200, "队伍名称格式错误")
+			return
+		}
+		if len(data.Slogan)>1000 {
+			utils.JsonErrorResponse(c, 200, "队伍口号格式错误")
+			return
+		}
 	//更新信息
 	err=teamService.Updateteaminfo(models.Team{
 		ID: data.ID,

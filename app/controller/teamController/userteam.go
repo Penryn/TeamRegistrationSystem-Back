@@ -11,8 +11,8 @@ import (
 
 //加入团队
 type jointeamdata struct{
-	ID int `json:"id"  binding:"required"`
-	TeamPassword string `json:"team_password"  binding:"required"`
+	ID int `form:"id"  binding:"required"`
+	TeamPassword string `form:"team_password"  binding:"required"`
 
 }
 
@@ -32,7 +32,7 @@ func JoinTeam(c *gin.Context){
 
 	//接受传参
 	var data jointeamdata
-	err:=c.ShouldBindJSON(&data)
+	err:=c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)
 		return
@@ -76,7 +76,7 @@ func JoinTeam(c *gin.Context){
 //退出团队
 
 type leaveteamdata struct{
-	ID int `json:"id"  binding:"required"`
+	ID int `form:"id"  binding:"required"`
 
 }
 
@@ -96,7 +96,7 @@ func LeaveTeam(c *gin.Context){
 
 	//接受传参
 	var data leaveteamdata
-	err:=c.ShouldBindJSON(&data)
+	err:=c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c,200,"参数错误")
 		return

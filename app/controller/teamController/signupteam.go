@@ -10,7 +10,7 @@ import (
 )
 
 type signupTeamdata struct{
-	ID int `json:"id"  binding:"required"`
+	ID int `form:"id"  binding:"required"`
 }
 
 func SubmitTeam(c *gin.Context){
@@ -28,7 +28,7 @@ func SubmitTeam(c *gin.Context){
 	}
 	//获取参数
 	var data signupTeamdata
-	err := c.ShouldBindJSON(&data)
+	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
@@ -84,7 +84,7 @@ func CancelTeam(c *gin.Context){
 	}
 	//获取参数
 	var data signupTeamdata
-	err := c.ShouldBindJSON(&data)
+	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return

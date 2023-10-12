@@ -82,8 +82,8 @@ func CreateTeam(c *gin.Context) {
 
 // 踢出队员
 type dissmissdata struct {
-	ID     int `json:"id"  binding:"required"`
-	UserID int `json:"user_id"  binding:"required"`
+	ID     int `form:"id"  binding:"required"`
+	UserID int `form:"user_id"  binding:"required"`
 }
 
 func DismissUser(c *gin.Context) {
@@ -101,7 +101,7 @@ func DismissUser(c *gin.Context) {
 	}
 	//获取参数
 	var data dissmissdata
-	err := c.ShouldBindJSON(&data)
+	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, "apiExpection.ParamError.Msg")
 		return
@@ -135,7 +135,7 @@ func DismissUser(c *gin.Context) {
 
 // 解散队伍
 type breakteamdata struct {
-	ID int `json:"id"  binding:"required"`
+	ID int `form:"id"  binding:"required"`
 }
 
 func BreakTeam(c *gin.Context) {
@@ -153,7 +153,7 @@ func BreakTeam(c *gin.Context) {
 	}
 	//获取参数
 	var data breakteamdata
-	err := c.ShouldBindJSON(&data)
+	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
