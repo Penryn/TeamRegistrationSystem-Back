@@ -94,8 +94,15 @@ func Updatainfo(info models.Userinfo)error{
 }
 
 func UpdataAvatar(info models.Userinfo)error{
-	result :=database.DB.Model(&info).Update("avatar",info.Avatar)
-	return result.Error
+	result1 :=database.DB.Model(&info).Update("avatar",info.Avatar)
+	result2 :=database.DB.Model(&models.User{UserID: info.UserID}).Update("avatar",info.Avatar)
+	if result1.Error !=nil{
+		return result1.Error
+	}else if result2.Error !=nil{
+		return result2.Error
+	}else{
+		return nil
+	}
 }
 
 func GetInfoList(userID int) ([]models.Userinfo, error) {

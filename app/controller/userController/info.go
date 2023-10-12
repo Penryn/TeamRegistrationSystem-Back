@@ -178,6 +178,7 @@ func AvatarUpload(c *gin.Context) {
 		return
 	}
 	url := c.Request.Host + "/uploads/" + filename
+	//获取用户信息
 	var user *models.Userinfo
 	user, err = userService.CheckUserinfoExistByUserid(v)
 	if err != nil {
@@ -186,6 +187,7 @@ func AvatarUpload(c *gin.Context) {
 	}
 	err = userService.UpdataAvatar(models.Userinfo{
 		ID:     user.ID,
+		UserID: user.UserID,
 		Avatar: "http://"+url,
 	})
 	if err != nil {
@@ -232,3 +234,5 @@ func GetUserInfo(c *gin.Context) {
 		"user_info": uinfoList[0],
 	})
 }
+
+

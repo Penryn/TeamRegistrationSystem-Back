@@ -50,7 +50,7 @@ func CreateTeam(c *gin.Context) {
 	}
 	//判断是否符合格式
 	name_sample:=regexp.MustCompile(`^.*\D.*$`)
-	if !name_sample.MatchString(data.TeamName)&&len(data.TeamName)>10 {
+	if !name_sample.MatchString(data.TeamName)||len(data.TeamName)>10 {
 		utils.JsonErrorResponse(c, 200, "队伍名称格式错误")
 		return
 	}
