@@ -26,7 +26,7 @@ func GetAllUserInfo() ([]models.Userinfo, error) {
 	return infoList, nil
 }
 
-func getAllTeamInfo() ([]models.Team, error) {
+func GetAllTeamInfo() ([]models.Team, error) {
 	var infoList []models.Team
 	result := database.DB.Find(&infoList)
 	if result.Error != nil {
@@ -35,7 +35,7 @@ func getAllTeamInfo() ([]models.Team, error) {
 	return infoList, nil
 }
 
-func deleteInfoByUserID(userID int) error {
+func DeleteInfoByUserID(userID int) error {
 	//?
 	err := database.DB.Where("uid = ?", userID).Delete(&models.User{}).Error
 	if err != nil {
