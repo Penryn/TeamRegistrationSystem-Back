@@ -17,6 +17,7 @@ func CreateTeam(team models.Team)error{
 		Slogan:team.Slogan,
 		TeamPassword: team.TeamPassword,
 		Number: team.Number,
+		Avatar: team.Avatar,
 		Users: []models.User{user},
 		
 	})

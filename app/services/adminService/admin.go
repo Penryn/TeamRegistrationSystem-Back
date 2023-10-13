@@ -17,7 +17,7 @@ import (
 
 }
 */
-func getAllUserInfo() ([]models.Userinfo, error) {
+func GetAllUserInfo() ([]models.Userinfo, error) {
 	var infoList []models.Userinfo
 	result := database.DB.Find(&infoList)
 	if result.Error != nil {
