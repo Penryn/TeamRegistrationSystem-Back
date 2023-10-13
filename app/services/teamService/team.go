@@ -56,7 +56,7 @@ func GetTeamListByTeamID(teamID int) ([]models.Team, error) {
 		return nil, result.Error
 	}
 	var teamList []models.Team
-	result = database.DB.Omit("users").Omit("avatar").Where("id=?", teamID).Find(&teamList)
+	result = database.DB.Omit("users").Where("id=?", teamID).Find(&teamList)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -82,7 +82,7 @@ func GetTeamListByTeamName(teamname string) ([]models.Team, error) {
 		return nil, result.Error
 	}
 	var teamList []models.Team
-	result = database.DB.Omit("users").Omit("avatar").Where("team_name LIKE ?", "%"+teamname+"%").Find(&teamList)
+	result = database.DB.Omit("users").Where("team_name LIKE ?", "%"+teamname+"%").Find(&teamList)
 	if result.Error != nil {
 		return nil, result.Error
 	}

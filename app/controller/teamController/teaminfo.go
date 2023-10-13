@@ -23,11 +23,39 @@ type Getteaminfodata struct {
 }
 
 func GetTeamInfo(c *gin.Context) {
+	//获取用户身份token
+	n, er := c.Get("UserID")
+	if !er {
+		utils.JsonErrorResponse(c, 200, "token获取失败")
+		return
+	}
+	v, _ := n.(int)
+	var user *models.User
+	user,terr :=teamService.GetUserByUserID(v)
+	if terr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+	var team *models.Team
+	team,terrr:=teamService.GetTeamByTeamID(user.TeamID)
+	if terrr !=nil{
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+	//接受数据
 	var data Getteaminfodata
 	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
+	}
+	var signed int
+	if data.ID==user.TeamID&&v==team.CaptainID{
+		signed=2
+	}else if data.ID==user.TeamID&&v!=team.CaptainID{
+		signed=1
+	}else{
+		signed=0
 	}
 	var TeamInfoList []models.Team
 	TeamInfoList, err = teamService.GetTeamMoreListByTeamID(data.ID)
@@ -41,6 +69,7 @@ func GetTeamInfo(c *gin.Context) {
 		}
 	}
 	utils.JsonSuccessResponse(c, gin.H{
+		"signed":  signed,
 		"team_info": TeamInfoList[0],
 	})
 
