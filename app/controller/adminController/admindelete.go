@@ -15,7 +15,7 @@ type GetInfoData struct {
 	Name string `form:"name" binding:"required"`
 }
 
-func deleteUserAndMessages(c *gin.Context) {
+func DeleteUserAndMessages(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {

@@ -129,6 +129,47 @@ func AdminGetTeam(c *gin.Context) {
 	}
 }
 
-func AdminMessage(c *gin.Context) {
+type GetMessageData struct {
+	Name string `form:"user_name" binding:"required"`
+}
 
+func AdminMessage(c *gin.Context) {
+	//获取用户身份token
+	n, er := c.Get("UserID")
+	if !er {
+		utils.JsonErrorResponse(c, 200, "token获取失败")
+		return
+	}
+	m, ok := n.(int)
+	if !ok {
+		utils.JsonErrorResponse(c, 200, "invalid user")
+		return
+	}
+	terr := userService.CheckUserExistByUID(m)
+	if terr != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+
+	var now models.User
+	database.DB.Where("uid = ?", m).First(&now)
+	permission := now.Permission
+	if permission == 0 {
+		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
+		return
+	}
+
+	//获取信息
+	var msg GetMessageData
+	err := c.ShouldBindQuery(&msg)
+	if err != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+
+	result := adminService.CreateMessage(msg.Name)
+	if result.Error != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.Unknown.Msg)
+	}
+	utils.JsonSuccessResponse(c, nil)
 }
