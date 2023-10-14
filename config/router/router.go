@@ -1,6 +1,7 @@
 package router
 
 import (
+	"TeamRegistrationSystem-Back/app/controller/adminController"
 	"TeamRegistrationSystem-Back/app/controller/messageController"
 	"TeamRegistrationSystem-Back/app/controller/teamController"
 	"TeamRegistrationSystem-Back/app/controller/userController"
@@ -36,8 +37,14 @@ func Init(r *gin.Engine){
 			team.PUT("/info",teamController.UpdateTeamInfo)
 			team.PUT("/cancel",teamController.CancelTeam)
 			team.PUT("/submit",teamController.SubmitTeam)
-			team.POST("/avatar",teamController.TeamAvatarUpload)
-			
+			team.POST("/avatar",teamController.TeamAvatarUpload)	
+		}
+		admin:=api.Group("/admin").Use(midwares.JWTAuthMiddleware())
+		{
+			admin.GET("/user", adminController.AdminInterface)
+			admin.GET("/team", adminController.AdminGetTeam)
+			admin.DELETE("/delete", adminController.DeleteUserAndMessages)
+			admin.POST("/message", adminController.AdminMessage)
 		}
 
 	}

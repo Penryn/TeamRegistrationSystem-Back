@@ -177,7 +177,7 @@ func AvatarUpload(c *gin.Context) {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
-	url := c.Request.Host + "/uploads/" + filename
+	url := "47.115.209.120:8080" + "/uploads/" + filename
 	//获取用户信息
 	var user *models.Userinfo
 	user, err = userService.CheckUserinfoExistByUserid(v)

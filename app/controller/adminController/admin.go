@@ -7,64 +7,95 @@ import (
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
 	"TeamRegistrationSystem-Back/config/database"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
-func deleteUserAndMessages(c *gin.Context) {
+type deletedata struct{
+	UserName  string `form:"user_name"`
+}
+
+
+func DeleteUserAndMessages(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
 		utils.JsonErrorResponse(c, 200, "token获取失败")
 		return
 	}
-	m, ok := n.(int)
-	if !ok {
-		utils.JsonErrorResponse(c, 200, "invalid user")
-		return
-	}
-	terr := userService.CheckUserExistByUID(m)
+	m, _ := n.(int)
+	var auser *models.User
+	auser,terr := adminService.GetUserByUid(m)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 
-	var user models.User
-	database.DB.Where("uid = ?", m).First(&user)
-	permission := user.Permission
+	permission := auser.Permission
 	if permission == 0 {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
 		return
 	}
 
 	//获取要删除的用户
-	var uid int
-	err := c.ShouldBindQuery(&uid)
+	var data deletedata
+	err := c.ShouldBindQuery(&data)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
-
-	//查询所在团队，是否存在已报名的团体
-	por := adminService.CheckTeamByUserID(uid)
-	if por == 1 {
-		utils.JsonErrorResponse(c, 200, "already registed")
+	var user *models.User
+	user,ter := adminService.GetUserByUserName(data.UserName)
+	if ter != nil {
+		utils.JsonErrorResponse(c, 200, "there's no such one person")
 		return
 	}
-
-	//否->清空用户与团队的关联
-	rerr := adminService.DeleteRelevantTeamInfo(uid)
-	if rerr != nil {
-		utils.JsonErrorResponse(c, 200, apiExpection.RequestError.Msg)
+	if user.Permission==1{
+		utils.JsonErrorResponse(c, 200, "No!!!I don't want to kill myself!")
 		return
+	}
+	//判断用户有无队伍
+	if user.TeamID!=0{
+		//查询所在团队，是否存在已报名的团体
+		var team *models.Team
+		team,por := adminService.GetTeamByTeamID(user.TeamID)
+		if por != nil {
+			utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+			return
+		}
+		if team.Confirm == 1 {
+			utils.JsonErrorResponse(c, 200, "already registed")
+			return
+		}
+		if team.CaptainID==user.UserID{
+			utils.JsonErrorResponse(c, 200, "teamCaptain nonono")
+			return
+		}
+
+		//否->清空用户与团队的关联
+		rerr := adminService.DeleteRelevantTeamInfo(user.UserID)
+		if rerr != nil {
+			utils.JsonErrorResponse(c, 200, apiExpection.RequestError.Msg)
+			return
+		}
 	}
 
 	//删除用户相关信息
-	err = adminService.DeleteInfoByUserID(uid)
+	err = adminService.DeleteInfoByUserID(user.UserID)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.RequestError.Msg)
 		return
 	}
+	err =adminService.CheckMessageByUserID(user.UserID)
+	if err==nil{
+		err = adminService.DeleteMessageByUserID(user.UserID)
+		if err != nil {
+			utils.JsonErrorResponse(c, 200, apiExpection.RequestError.Msg)
+			return
+		}
+	}
+	utils.JsonSuccessResponse(c,nil)
 }
 
 // type adminIdentify struct {
@@ -72,7 +103,7 @@ func deleteUserAndMessages(c *gin.Context) {
 // }
 
 // 管理员界面
-func adminInterface(c *gin.Context) {
+func AdminInterface(c *gin.Context) {
 
 	//获取用户身份token
 	n, er := c.Get("UserID")
@@ -120,19 +151,24 @@ func adminInterface(c *gin.Context) {
 		return
 	}
 
+	for _, j := range allUserInfo {
+		fmt.Print(j)
+	}
+
 	// allTeamInfo, err := adminService.GetAllTeamInfo()
 	// if err != nil {
 	// 	utils.JsonInternalServerErrorResponse(c)
 	// 	return
 	// }
 
-	utils.JsonSuccessResponse(c, gin.H{
-		"user_info": allUserInfo,
-		// "team_info": allTeamInfo,
-	})
+	// utils.JsonSuccessResponse(c, gin.H{
+	// 	"user_info": allUserInfo,
+	// 	// "team_info": allTeamInfo,
+	// })
+
 }
 
-func adminGetTeam(c *gin.Context) {
+func AdminGetTeam(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
@@ -170,7 +206,15 @@ func adminGetTeam(c *gin.Context) {
 		return
 	}
 
-	utils.JsonSuccessResponse(c, gin.H{
-		"team_info": allTeamInfo,
-	})
+	// utils.JsonSuccessResponse(c, gin.H{
+	// 	"team_info": allTeamInfo,
+	// })
+
+	for _, j := range allTeamInfo {
+		fmt.Println(j)
+	}
+}
+
+func AdminMessage(c *gin.Context) {
+
 }

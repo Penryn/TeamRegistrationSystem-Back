@@ -3,6 +3,7 @@ package adminService
 import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/config/database"
+	//"fmt"
 	"time"
 )
 
@@ -35,10 +36,22 @@ func GetAllTeamInfo(op int) ([]models.Team, error) {
 }
 
 func DeleteInfoByUserID(userID int) error {
-	//?
-	err := database.DB.Where("use_id = ?", userID).Delete(&models.User{}).Error
-	if err != nil {
-		return err
+	var user models.User
+	database.DB.Take(&user,userID)
+	// err := database.DB.Model(&user).Association("UserInfo").Clear()
+	database.DB.Where("user_id=?",userID).Delete(&models.Userinfo{UserID: userID})
+	database.DB.Delete(&models.User{UserID: userID})
+	// if err != nil {
+	// 	return err
+
+	// }
+	return nil
+}
+
+func DeleteMessageByUserID(userID int) error {
+	result := database.DB.Where("user_id = ?", userID).Delete(&models.Message{})
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }
@@ -66,6 +79,17 @@ func CheckTeamByUserID(userID int) int {
 }
 */
 
+func CheckMessageByUserID(userID int) error {
+	var userMessage models.Message
+	// result :=
+	result:=database.DB.Where("user_id = ?", userID).Find(&userMessage)
+	if result.Error !=nil {
+		return result.Error
+	}
+	return nil
+}
+
+
 func CheckTeamByUserID(userID int) int {
 	var userTeam models.Team
 	// result :=
@@ -78,7 +102,7 @@ func CheckTeamByUserID(userID int) int {
 
 func GetTeamByTeamID(tid int) (*models.Team, error) {
 	var team models.Team
-	result := database.DB.Where("id = ?", tid).Find(&team)
+	result := database.DB.Preload("Users").Where("id = ?", tid).Find(&team)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -101,7 +125,7 @@ func UpdateUserNumber(tid int) error {
 
 func DeleteRelevantTeamInfo(uid int) error {
 	// var userTeam []models.Team
-	var userTeam models.Team
+	var userTeam models.User
 	result := database.DB.Where("user_id = ?", uid).Find(&userTeam)
 	if result.Error != nil {
 		return result.Error
@@ -110,9 +134,9 @@ func DeleteRelevantTeamInfo(uid int) error {
 	var user models.User
 	database.DB.Take(&user, uid)
 	// for i := 0; i < len(userTeam); i++ {
-	database.DB.Take(&team, userTeam.ID)
+	database.DB.Take(&team, userTeam.TeamID)
 	database.DB.Model(&team).Association("Users").Delete(&user)
-	UpdateUserNumber(userTeam.ID)
+	UpdateUserNumber(userTeam.TeamID)
 	// }
 	return nil
 }
@@ -145,4 +169,31 @@ func CreateMessage(notice string) error {
 		database.DB.Create(&mess)
 	}
 	return nil
+}
+
+func GetUserByUid(uid int)(*models.User,error){
+	var user models.User
+	result :=database.DB.Where("user_id = ?",uid).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func GetUseInforByUid(uid int)(*models.Userinfo,error){
+	var user models.Userinfo
+	result :=database.DB.Where("user_id = ?",uid).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func GetUserByUserName(uname string)(*models.User,error){
+	var user models.User
+	result :=database.DB.Where("name = ?",uname).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
 }

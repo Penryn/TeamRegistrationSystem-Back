@@ -246,10 +246,10 @@ func TeamAvatarUpload(c *gin.Context) {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
-	url := c.Request.Host + "/uploads/" + filename
+	url := "47.115.209.120:8080" + "/uploads/" + filename
 	err = teamService.UpdataTeamAvatar(models.Team{
 		ID:     user.TeamID,
-		Avatar: url,
+		Avatar: "http://"+url,
 	})
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
