@@ -11,6 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+/*
+type GetInfoData struct {
+	Name string `form:"name" binding:"required"`
+}
+
 func deleteUserAndMessages(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
@@ -29,27 +34,48 @@ func deleteUserAndMessages(c *gin.Context) {
 		return
 	}
 
-	var user models.User
-	database.DB.Where("uid = ?", m).First(&user)
-	permission := user.Permission
+	var now models.User
+	database.DB.Where("uid = ?", m).First(&now)
+	permission := now.Permission
 	if permission == 0 {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
 		return
 	}
 
 	//获取要删除的用户
-	var uid int
-	err := c.ShouldBindQuery(&uid)
+	// var uid int
+	var username GetInfoData
+	err := c.ShouldBindQuery(&username)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
+	// var user models.User
+	// var uid int
+	user, qer := adminService.GetUserByName(username.Name)
+	if qer != nil {
+		utils.JsonErrorResponse(c, 200, "there's no such one person")
+		return
+	}
+	uid := user.UserID
+
+	//判断是否为管理员本人
+	if uid == m {
+		utils.JsonErrorResponse(c, 200, "No!!!I don't want to kill myself!")
+		return
+	}
 
 	//查询所在团队，是否存在已报名的团体
-	por := adminService.CheckTeamByUserID(uid)
-	if por == 1 {
-		utils.JsonErrorResponse(c, 200, "already registed")
-		return
+	exs := adminService.CheckTeamExist(uid)
+	if exs == 1 {
+		por := adminService.CheckTeamByUserID(uid)
+		if por == 1 {
+			utils.JsonErrorResponse(c, 200, "already registed")
+			return
+		} else if por == 2 {
+			utils.JsonErrorResponse(c, 200, "teamCaptain nonono")
+			return
+		}
 	}
 
 	//否->清空用户与团队的关联
@@ -66,6 +92,7 @@ func deleteUserAndMessages(c *gin.Context) {
 		return
 	}
 }
+*/
 
 // type adminIdentify struct {
 // 	Permission int `json:"permission" binding:"Required"`
@@ -173,4 +200,8 @@ func adminGetTeam(c *gin.Context) {
 	utils.JsonSuccessResponse(c, gin.H{
 		"team_info": allTeamInfo,
 	})
+}
+
+func adminNotice(c *gin.Context) {
+
 }

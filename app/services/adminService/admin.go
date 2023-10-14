@@ -4,6 +4,8 @@ import (
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/config/database"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func IsAdmin(UserID int) (int, error) {
@@ -66,14 +68,35 @@ func CheckTeamByUserID(userID int) int {
 }
 */
 
+func GetUserByName(name string) (*models.User, error) {
+	var user models.User
+	result := database.DB.Where("name = ?", name).Find(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func CheckTeamExist(uid int) int {
+	var userTeam models.Team
+	result := database.DB.Where("user_id = ?", uid).First(&userTeam)
+	if result.Error == gorm.ErrRecordNotFound {
+		return 0
+	}
+	return 1
+}
+
 func CheckTeamByUserID(userID int) int {
 	var userTeam models.Team
 	// result :=
 	database.DB.Where("user_id = ?", userID).Find(&userTeam)
 	if userTeam.Confirm == 1 {
-		return 0
+		return 1
 	}
-	return 1
+	if userTeam.CaptainID == userID {
+		return 2
+	}
+	return 0
 }
 
 func GetTeamByTeamID(tid int) (*models.Team, error) {
