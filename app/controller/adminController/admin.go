@@ -7,6 +7,7 @@ import (
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
 	"TeamRegistrationSystem-Back/config/database"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +16,7 @@ import (
 type GetInfoData struct {
 	Name string `form:"name" binding:"required"`
 }
+
 
 func deleteUserAndMessages(c *gin.Context) {
 	//获取用户身份token
@@ -147,16 +149,21 @@ func adminInterface(c *gin.Context) {
 		return
 	}
 
+	for _, j := range allUserInfo {
+		fmt.Println(j)
+	}
+
 	// allTeamInfo, err := adminService.GetAllTeamInfo()
 	// if err != nil {
 	// 	utils.JsonInternalServerErrorResponse(c)
 	// 	return
 	// }
 
-	utils.JsonSuccessResponse(c, gin.H{
-		"user_info": allUserInfo,
-		// "team_info": allTeamInfo,
-	})
+	// utils.JsonSuccessResponse(c, gin.H{
+	// 	"user_info": allUserInfo,
+	// 	// "team_info": allTeamInfo,
+	// })
+
 }
 
 func adminGetTeam(c *gin.Context) {
@@ -197,9 +204,13 @@ func adminGetTeam(c *gin.Context) {
 		return
 	}
 
-	utils.JsonSuccessResponse(c, gin.H{
-		"team_info": allTeamInfo,
-	})
+	// utils.JsonSuccessResponse(c, gin.H{
+	// 	"team_info": allTeamInfo,
+	// })
+
+	for _, j := range allTeamInfo {
+		fmt.Println(j)
+	}
 }
 
 func adminNotice(c *gin.Context) {
