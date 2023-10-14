@@ -17,7 +17,7 @@ import (
 	"gorm.io/gorm"
 )
 
-//获取团队信息
+// 获取团队信息
 type Getteaminfodata struct {
 	ID int `form:"id"  binding:"required"`
 }
@@ -31,8 +31,8 @@ func GetTeamInfo(c *gin.Context) {
 	}
 	v, _ := n.(int)
 	var user *models.User
-	user,terr :=teamService.GetUserByUserID(v)
-	if terr !=nil{
+	user, terr := teamService.GetUserByUserID(v)
+	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
@@ -45,22 +45,23 @@ func GetTeamInfo(c *gin.Context) {
 	}
 
 	var signed int
-	if user.TeamID==0{
-		signed=0
-	}else{
+	if user.TeamID == 0 {
+		signed = 0
+	} else {
 		var team *models.Team
-		team,terrr:=teamService.GetTeamByTeamID(user.TeamID)
-		if terrr !=nil{
+		team, terrr := teamService.GetTeamByTeamID(user.TeamID)
+		if terrr != nil {
 			utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 			return
 		}
-		if data.ID==user.TeamID&&v==team.CaptainID{
-			signed=2
-		}else if data.ID==user.TeamID&&v!=team.CaptainID{
-			signed=1
-		}else{
-			signed=0
-		}}
+		if data.ID == user.TeamID && v == team.CaptainID {
+			signed = 2
+		} else if data.ID == user.TeamID && v != team.CaptainID {
+			signed = 1
+		} else {
+			signed = 0
+		}
+	}
 	var TeamInfoList *models.Team
 	TeamInfoList, err = teamService.GetTeamMoreByTeamID(data.ID)
 	if err != nil {
@@ -72,36 +73,35 @@ func GetTeamInfo(c *gin.Context) {
 			return
 		}
 	}
-	type Team_info struct{
-		ID           int    `json:"id"  gorm:"foreignkey:TeamID"`
-		Signed       int     `json:"signed"`
-		TeamName     string `json:"team_name"`
-		CaptainName  string `json:"captain_name"`
-		Slogan       string `json:"slogan"`
-		Avatar       string `json:"avatar"`
-		Confirm      int    `json:"confirm"`
-		Number       int    `json:"number"`
-		Users        []models.User `json:"users"`
+	type Team_info struct {
+		ID          int           `json:"id"  gorm:"foreignkey:TeamID"`
+		Signed      int           `json:"signed"`
+		TeamName    string        `json:"team_name"`
+		CaptainName string        `json:"captain_name"`
+		Slogan      string        `json:"slogan"`
+		Avatar      string        `json:"avatar"`
+		Confirm     int           `json:"confirm"`
+		Number      int           `json:"number"`
+		Users       []models.User `json:"users"`
 	}
-	utils.JsonResponse(c,200,200,"ok",gin.H{
-		"team_info":Team_info{
-		ID: TeamInfoList.ID,
-		Signed: signed,
-		TeamName: TeamInfoList.TeamName,
-		CaptainName: TeamInfoList.CaptainName,
-		Slogan: TeamInfoList.Slogan,
-		Avatar: TeamInfoList.Avatar,
-		Confirm: TeamInfoList.Confirm,
-		Number: TeamInfoList.Number,
-		Users: TeamInfoList.Users,
-
-	}})
+	utils.JsonResponse(c, 200, 200, "ok", gin.H{
+		"team_info": Team_info{
+			ID:          TeamInfoList.ID,
+			Signed:      signed,
+			TeamName:    TeamInfoList.TeamName,
+			CaptainName: TeamInfoList.CaptainName,
+			Slogan:      TeamInfoList.Slogan,
+			Avatar:      TeamInfoList.Avatar,
+			Confirm:     TeamInfoList.Confirm,
+			Number:      TeamInfoList.Number,
+			Users:       TeamInfoList.Users,
+		}})
 
 }
 
-//更新基本信息
+// 更新基本信息
 type UpdateInfoData struct {
-	ID      int  `json:"id"  binding:"required"`
+	ID       int    `json:"id"  binding:"required"`
 	TeamName string `json:"team_name"  binding:"required"`
 	Slogan   string `json:"slogan"  binding:"required"`
 }
@@ -114,46 +114,46 @@ func UpdateTeamInfo(c *gin.Context) {
 		return
 	}
 	v, _ := n.(int)
-	terr :=teamService.CheckUserExistByUID(v)
-	if terr !=nil{
+	terr := teamService.CheckUserExistByUID(v)
+	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//获取参数
 	var data UpdateInfoData
-	err:=c.ShouldBindJSON(&data)
+	err := c.ShouldBindJSON(&data)
 	if err != nil {
-		utils.JsonErrorResponse(c,200,apiExpection.ParamError.Msg)
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//获取团队信息
 	var team *models.Team
-	team,err=teamService.GetTeamByTeamID(data.ID)
-	if err!=nil{
+	team, err = teamService.GetTeamByTeamID(data.ID)
+	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
 	//判断是否为队长
-	flag:=teamService.ComPaRe(team.CaptainID,v)
-	if !flag{
-		utils.JsonErrorResponse(c,200,"你不是队长，权限不足")
+	flag := teamService.ComPaRe(team.CaptainID, v)
+	if !flag {
+		utils.JsonErrorResponse(c, 200, "你不是队长，权限不足")
 		return
 	}
-		//判断是否符合格式
-		name_sample:=regexp.MustCompile(`^.*\D.*$`)
-		if !name_sample.MatchString(data.TeamName)||len(data.TeamName)>10 {
-			utils.JsonErrorResponse(c, 200, "队伍名称格式错误")
-			return
-		}
-		if len(data.Slogan)>1000 {
-			utils.JsonErrorResponse(c, 200, "队伍口号格式错误")
-			return
-		}
+	//判断是否符合格式
+	name_sample := regexp.MustCompile(`^.*\D.*$`)
+	if !name_sample.MatchString(data.TeamName) || len(data.TeamName) > 10 {
+		utils.JsonErrorResponse(c, 200, "队伍名称格式错误")
+		return
+	}
+	if len(data.Slogan) > 1000 {
+		utils.JsonErrorResponse(c, 200, "队伍口号格式错误")
+		return
+	}
 	//更新信息
-	err=teamService.Updateteaminfo(models.Team{
-		ID: data.ID,
+	err = teamService.Updateteaminfo(models.Team{
+		ID:       data.ID,
 		TeamName: data.TeamName,
-		Slogan: data.Slogan,
+		Slogan:   data.Slogan,
 	})
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
@@ -163,9 +163,8 @@ func UpdateTeamInfo(c *gin.Context) {
 
 }
 
-
-//更新头像
-func TeamAvatarUpload(c *gin.Context){
+// 更新头像
+func TeamAvatarUpload(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
@@ -173,29 +172,29 @@ func TeamAvatarUpload(c *gin.Context){
 		return
 	}
 	v, _ := n.(int)
-	terr :=teamService.CheckUserExistByUID(v)
-	if terr !=nil{
+	terr := teamService.CheckUserExistByUID(v)
+	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 	//获取用户信息
 	var user *models.User
-	user,err :=teamService.GetUserByUserID(v)
-	if err!=nil{
+	user, err := teamService.GetUserByUserID(v)
+	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
 	//获取团队信息
 	var team *models.Team
-	team,err=teamService.GetTeamByTeamID(user.TeamID)
-	if err!=nil{
-		utils.JsonErrorResponse(c,200,"团队不存在")
+	team, err = teamService.GetTeamByTeamID(user.TeamID)
+	if err != nil {
+		utils.JsonErrorResponse(c, 200, "团队不存在")
 		return
 	}
 	//判断是否为队长
-	flag:=teamService.ComPaRe(team.CaptainID,v)
-	if !flag{
-		utils.JsonErrorResponse(c,200,"你不是队长，权限不足")
+	flag := teamService.ComPaRe(team.CaptainID, v)
+	if !flag {
+		utils.JsonErrorResponse(c, 200, "你不是队长，权限不足")
 		return
 	}
 	//保存图片文件
@@ -248,8 +247,8 @@ func TeamAvatarUpload(c *gin.Context){
 		return
 	}
 	url := c.Request.Host + "/uploads/" + filename
-	err =teamService.UpdataTeamAvatar(models.Team{
-		ID: user.TeamID,
+	err = teamService.UpdataTeamAvatar(models.Team{
+		ID:     user.TeamID,
 		Avatar: url,
 	})
 	if err != nil {

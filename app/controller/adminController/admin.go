@@ -11,22 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func deleteUserAndMessages(c *gin.Context)  {
-	//获取用户身份token
-	//判断是否为管理员
-	//查询所在团队，是否存在正好5人的团体
-	//是->删除用户相关信息
-	//清空用户与团队的关联
-	//删除用户
-	return 
-}
-
-// type adminIdentify struct {
-// 	Permission int `json:"permission" binding:"Required"`
-// }
-
-// 管理员界面
-func adminInterface(c *gin.Context) {
+func deleteUserAndMessages(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
 	if !er {
@@ -43,21 +28,6 @@ func adminInterface(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
-	/*
-		var data adminIdentify
-		err := c.ShouldBindJSON(&data)
-		if err != nil {
-			utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
-			return
-		}
-		//判断操作权限
-		if data.Permission == 0 {
-			utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
-			return
-		}
-	*/
-	//我不知道他们有没有（
-	//还是说我应该从数据库拿
 
 	var user models.User
 	database.DB.Where("uid = ?", m).First(&user)
@@ -66,21 +36,141 @@ func adminInterface(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
 		return
 	}
-	//
-	//?
+
+	//获取要删除的用户
+	var uid int
+	err := c.ShouldBindQuery(&uid)
+	if err != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+
+	//查询所在团队，是否存在已报名的团体
+	por := adminService.CheckTeamByUserID(uid)
+	if por == 1 {
+		utils.JsonErrorResponse(c, 200, "already registed")
+		return
+	}
+
+	//否->清空用户与团队的关联
+	rerr := adminService.DeleteRelevantTeamInfo(uid)
+	if rerr != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.RequestError.Msg)
+		return
+	}
+
+	//删除用户相关信息
+	err = adminService.DeleteInfoByUserID(uid)
+	if err != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.RequestError.Msg)
+		return
+	}
+}
+
+// type adminIdentify struct {
+// 	Permission int `json:"permission" binding:"Required"`
+// }
+
+// 管理员界面
+func adminInterface(c *gin.Context) {
+
+	//获取用户身份token
+	n, er := c.Get("UserID")
+	if !er {
+		utils.JsonErrorResponse(c, 200, "token获取失败")
+		return
+	}
+	uid, ok := n.(int)
+	if !ok {
+		utils.JsonErrorResponse(c, 200, "invalid user")
+		return
+	}
+	terr := userService.CheckUserExistByUID(uid)
+	if terr != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+
+	// var data adminIdentify
+	// err := c.ShouldBindJSON(&data)
+	// if err != nil {
+	// 	utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+	// 	return
+	// }
+	// //判断操作权限
+	// if data.Permission == 0 {
+	// 	utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
+	// 	return
+	// }
+
+	//我不知道他们有没有（
+	//还是说我应该从数据库拿
+
+	var user models.User
+	database.DB.Where("uid = ?", uid).First(&user)
+	permission := user.Permission
+	if permission == 0 {
+		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
+		return
+	}
+
 	allUserInfo, err := adminService.GetAllUserInfo()
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
-	allTeamInfo, err := adminService.GetAllTeamInfo()
+
+	// allTeamInfo, err := adminService.GetAllTeamInfo()
+	// if err != nil {
+	// 	utils.JsonInternalServerErrorResponse(c)
+	// 	return
+	// }
+
+	utils.JsonSuccessResponse(c, gin.H{
+		"user_info": allUserInfo,
+		// "team_info": allTeamInfo,
+	})
+}
+
+func adminGetTeam(c *gin.Context) {
+	//获取用户身份token
+	n, er := c.Get("UserID")
+	if !er {
+		utils.JsonErrorResponse(c, 200, "token获取失败")
+		return
+	}
+	m, ok := n.(int)
+	if !ok {
+		utils.JsonErrorResponse(c, 200, "invalid user")
+		return
+	}
+	terr := userService.CheckUserExistByUID(m)
+	if terr != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+	var user models.User
+	database.DB.Where("uid = ?", m).First(&user)
+	permission := user.Permission
+	if permission == 0 {
+		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
+		return
+	}
+
+	var op int
+	err := c.ShouldBindQuery(&op)
+	if err != nil {
+		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+		return
+	}
+
+	allTeamInfo, err := adminService.GetAllTeamInfo(op)
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
 
 	utils.JsonSuccessResponse(c, gin.H{
-		"user_info": allUserInfo,
 		"team_info": allTeamInfo,
 	})
 }
