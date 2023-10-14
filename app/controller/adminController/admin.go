@@ -11,13 +11,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func deleteUserAndMessages(c *gin.Context) error {
+func deleteUserAndMessages(c *gin.Context)  {
 	//获取用户身份token
 	//判断是否为管理员
 	//查询所在团队，是否存在正好5人的团体
 	//是->删除用户相关信息
 	//清空用户与团队的关联
 	//删除用户
+	return 
 }
 
 // type adminIdentify struct {

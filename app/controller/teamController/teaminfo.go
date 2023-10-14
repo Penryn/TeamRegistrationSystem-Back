@@ -36,12 +36,6 @@ func GetTeamInfo(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
-	var team *models.Team
-	team,terrr:=teamService.GetTeamByTeamID(user.TeamID)
-	if terrr !=nil{
-		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
-		return
-	}
 	//接受数据
 	var data Getteaminfodata
 	err := c.ShouldBindQuery(&data)
@@ -49,29 +43,59 @@ func GetTeamInfo(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
+
 	var signed int
-	if data.ID==user.TeamID&&v==team.CaptainID{
-		signed=2
-	}else if data.ID==user.TeamID&&v!=team.CaptainID{
-		signed=1
-	}else{
+	if user.TeamID==0{
 		signed=0
-	}
-	var TeamInfoList []models.Team
-	TeamInfoList, err = teamService.GetTeamMoreListByTeamID(data.ID)
+	}else{
+		var team *models.Team
+		team,terrr:=teamService.GetTeamByTeamID(user.TeamID)
+		if terrr !=nil{
+			utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
+			return
+		}
+		if data.ID==user.TeamID&&v==team.CaptainID{
+			signed=2
+		}else if data.ID==user.TeamID&&v!=team.CaptainID{
+			signed=1
+		}else{
+			signed=0
+		}}
+	var TeamInfoList *models.Team
+	TeamInfoList, err = teamService.GetTeamMoreByTeamID(data.ID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			utils.JsonErrorResponse(c, 404, "队伍为空")
+			utils.JsonErrorResponse(c, 200, "队伍为空")
 			return
 		} else {
 			utils.JsonInternalServerErrorResponse(c)
 			return
 		}
 	}
-	utils.JsonSuccessResponse(c, gin.H{
-		"signed":  signed,
-		"team_info": TeamInfoList[0],
-	})
+	type Team_info struct{
+		ID           int    `json:"id"  gorm:"foreignkey:TeamID"`
+		Signed       int     `json:"signed"`
+		TeamName     string `json:"team_name"`
+		CaptainName  string `json:"captain_name"`
+		Slogan       string `json:"slogan"`
+		Avatar       string `json:"avatar"`
+		Confirm      int    `json:"confirm"`
+		Number       int    `json:"number"`
+		Users        []models.User `json:"users"`
+	}
+	utils.JsonResponse(c,200,200,"ok",gin.H{
+		"team_info":Team_info{
+		ID: TeamInfoList.ID,
+		Signed: signed,
+		TeamName: TeamInfoList.TeamName,
+		CaptainName: TeamInfoList.CaptainName,
+		Slogan: TeamInfoList.Slogan,
+		Avatar: TeamInfoList.Avatar,
+		Confirm: TeamInfoList.Confirm,
+		Number: TeamInfoList.Number,
+		Users: TeamInfoList.Users,
+
+	}})
 
 }
 

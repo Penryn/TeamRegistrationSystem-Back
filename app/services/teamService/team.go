@@ -76,6 +76,7 @@ func GetTeamMoreListByTeamID(teamID int) ([]models.Team, error) {
 	return teamList, nil
 }
 
+
 func GetTeamListByTeamName(teamname string) ([]models.Team, error) {
 	result := database.DB.Where("team_name LIKE ?", "%"+teamname+"%").Find(&models.Team{})
 	if result.Error != nil {
