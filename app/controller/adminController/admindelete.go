@@ -33,7 +33,7 @@ func DeleteUserAndMessages(c *gin.Context) {
 	}
 
 	var now models.User
-	database.DB.Where("uid = ?", m).First(&now)
+	database.DB.Where("user_id = ?", m).First(&now)
 	permission := now.Permission
 	if permission == 0 {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")

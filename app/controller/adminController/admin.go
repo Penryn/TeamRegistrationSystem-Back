@@ -4,7 +4,6 @@ import (
 	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/services/adminService"
 	"TeamRegistrationSystem-Back/app/utils"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +31,8 @@ func AdminInterface(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
+
+	// fmt.Println(1)
 
 	user := adminService.GetUserByUserID(uid)
 	permission := user.Permission
@@ -67,7 +68,7 @@ type GetTeamOpData struct {
 
 func AdminGetTeam(c *gin.Context) {
 	//获取用户身份token
-	fmt.Println(1)
+	// fmt.Println(1)
 
 	n, er := c.Get("UserID")
 	if !er {
@@ -80,7 +81,7 @@ func AdminGetTeam(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(2)
+	// fmt.Println(2)
 
 	terr := adminService.CheckUserExistByUID(m)
 	if terr != nil {
@@ -95,11 +96,11 @@ func AdminGetTeam(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(3)
+	// fmt.Println(3)
 
 	var op GetTeamOpData
 	err := c.ShouldBindQuery(&op)
-	if err != nil {
+	if op.Op != 0 && err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}

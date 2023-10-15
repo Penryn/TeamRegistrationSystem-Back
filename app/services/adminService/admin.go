@@ -89,22 +89,28 @@ func GetUserByName(name string) (*models.User, error) {
 }
 
 func CheckTeamExist(uid int) int {
-	var userTeam models.Team
-	result := database.DB.Where("user_id = ?", uid).First(&userTeam)
+	var user models.User
+	var team models.Team
+	database.DB.Where("user_id = ?", uid).Find(&user)
+	result := database.DB.Where("id = ?", user.TeamID).Find(&team)
+	// result := database.DB.Preload("Users").Where("user_id = ?", uid).First(&userTeam)
 	if result.Error == gorm.ErrRecordNotFound {
 		return 0
 	}
 	return 1
 }
 
-func CheckTeamByUserID(userID int) int {
-	var userTeam models.Team
+func CheckTeamByUserID(uid int) int {
+	var user models.User
+	var team models.Team
 	// result :=
-	database.DB.Where("user_id = ?", userID).Find(&userTeam)
-	if userTeam.Confirm == 1 {
+	database.DB.Where("user_id = ?", uid).Find(&user)
+	database.DB.Where("id = ?", user.TeamID).Find(&team)
+	// database.DB.Preload("Users").Where("user_id = ?", uid).Find(&userTeam)
+	if team.Confirm == 1 {
 		return 1
 	}
-	if userTeam.CaptainID == userID {
+	if team.CaptainID == uid {
 		return 2
 	}
 	return 0
@@ -135,18 +141,21 @@ func UpdateUserNumber(tid int) error {
 
 func DeleteRelevantTeamInfo(uid int) error {
 	// var userTeam []models.Team
-	var userTeam models.Team
-	result := database.DB.Preload("Users").Where("user_id = ?", uid).Find(&userTeam)
+	var team models.Team
+	var user models.User
+	database.DB.Where("user_id = ?", uid).Find(&user)
+	result := database.DB.Where("id= ?", user.TeamID).Find(&team)
+	// result := database.DB.Preload("Users").Where("user_id = ?", uid).Find(&userTeam)
 	if result.Error != nil {
 		return result.Error
 	}
-	var team models.Team
-	var user models.User
+	// var team models.Team
+	// var user models.User
 	database.DB.Take(&user, uid)
 	// for i := 0; i < len(userTeam); i++ {
-	database.DB.Take(&team, userTeam.ID)
+	database.DB.Take(&team, user.TeamID)
 	database.DB.Model(&team).Association("Users").Delete(&user)
-	UpdateUserNumber(userTeam.ID)
+	UpdateUserNumber(user.TeamID)
 	// }
 	return nil
 }
