@@ -10,22 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Init(r *gin.Engine){
+func Init(r *gin.Engine) {
 	const pre = "/api"
 
-	api:=r.Group(pre)
-	{	api.POST("/login",userController.Login)
-		api.POST("/reg",userController.Register)
-		api.PUT("/ret",userController.Retrieve)
-		api.POST("/email",userController.Sendmail)
-		user:=api.Group("/user").Use(midwares.JWTAuthMiddleware())
+	api := r.Group(pre)
+	{
+		api.POST("/login", userController.Login)
+		api.POST("/reg", userController.Register)
+		api.PUT("/ret", userController.Retrieve)
+		api.POST("/email", userController.Sendmail)
+		user := api.Group("/user").Use(midwares.JWTAuthMiddleware())
 		{
-			user.PUT("/info",userController.Updateinfodata)
-			user.POST("/avatar",userController.AvatarUpload)
-			user.GET("/info",userController.GetUserInfo)
-			user.GET("/message",messageController.GetUserInformation)
+			user.PUT("/info", userController.Updateinfodata)
+			user.POST("/avatar", userController.AvatarUpload)
+			user.GET("/info", userController.GetUserInfo)
+			user.GET("/message", messageController.GetUserInformation)
 		}
-		team:=api.Group("/team").Use(midwares.JWTAuthMiddleware())
+		team := api.Group("/team").Use(midwares.JWTAuthMiddleware())
 		{
 			team.POST("/create",teamController.CreateTeam)
 			team.DELETE("/delete",teamController.BreakTeam)

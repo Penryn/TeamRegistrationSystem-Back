@@ -203,3 +203,8 @@ func GetUserIDSlice() ([]int, error) {
 	}
 	return num, nil
 }
+
+func CheckUserExistByUID(uid int) error {
+	result := database.DB.Where("user_id = ?", uid).First(&models.User{})
+	return result.Error
+}

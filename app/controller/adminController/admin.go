@@ -4,11 +4,11 @@ import (
 	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/adminService"
-	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	
 )
 
 type deletedata struct{
@@ -162,7 +162,7 @@ func AdminGetTeam(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "invalid user")
 		return
 	}
-	terr := userService.CheckUserExistByUID(m)
+	terr := adminService.CheckUserExistByUID(m)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
@@ -215,7 +215,7 @@ func AdminMessage(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "invalid user")
 		return
 	}
-	terr := userService.CheckUserExistByUID(m)
+	terr := adminService.CheckUserExistByUID(m)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
