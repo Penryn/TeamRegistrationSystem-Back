@@ -7,22 +7,18 @@ import (
 	"time"
 )
 
-func IsAdmin(UserID int) (int, error) {
-	var user models.User
-	err := database.DB.First(&user, UserID).Error
-	if err != nil {
-		return -1, err
-	}
-	return user.Permission, nil
-}
 
-func GetAllUserInfo() ([]models.Userinfo, error) {
-	var infoList []models.Userinfo
-	result := database.DB.Find(&infoList)
+func GetUserList() ([]models.User, error) {
+	result := database.DB.Find(&models.User{})
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return infoList, nil
+	var userList []models.User
+	result = database.DB.Find(&userList)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return userList, nil
 }
 
 func GetAllTeamInfo(op int) ([]models.Team, error) {
@@ -31,7 +27,6 @@ func GetAllTeamInfo(op int) ([]models.Team, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	return infoList, nil
 }
 
@@ -90,16 +85,6 @@ func CheckMessageByUserID(userID int) error {
 }
 
 
-func CheckTeamByUserID(userID int) int {
-	var userTeam models.Team
-	// result :=
-	database.DB.Where("user_id = ?", userID).Find(&userTeam)
-	if userTeam.Confirm == 1 {
-		return 0
-	}
-	return 1
-}
-
 func GetTeamByTeamID(tid int) (*models.Team, error) {
 	var team models.Team
 	result := database.DB.Preload("Users").Where("id = ?", tid).Find(&team)
@@ -154,17 +139,16 @@ func GetAllUserID() ([]int, error) {
 	return ids, nil
 }
 
-func CreateMessage(notice string) error {
-	// var user models.User
-	num, err := GetAllUserID()
-	if err != nil {
+func CreateMessage(notice string)error{
+	num,err:=GetUserIDSlice()
+	if err !=nil{
 		return err
 	}
-	for _, i := range num {
-		mess := models.Message{
-			UserID:      i,
+	for _,i:=range num{
+		mess :=models.Message{
+			UserID: i,
 			Information: notice,
-			Time:        time.Now().Format("2006-01-02 15:04"),
+			Time: time.Now().Format("2006-01-02 15:04"),
 		}
 		database.DB.Create(&mess)
 	}
@@ -196,4 +180,26 @@ func GetUserByUserName(uname string)(*models.User,error){
 		return nil, result.Error
 	}
 	return &user, nil
+}
+
+func DeleteTeam(tid int,uname string)error{
+	var team models.Team
+	database.DB.Preload("Users").Take(&team,tid)
+	CreateMessage(uname+"被删除，该所属队伍被解散")
+	database.DB.Model(&team).Association("Users").Delete(&team.Users)
+	result:=database.DB.Delete(&team)
+	return result.Error
+}
+
+func GetUserIDSlice() ([]int, error) {
+	var user []models.User
+	result := database.DB.Find(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	num :=[]int{}
+	for _,j:=range user{
+		num=append(num,j.UserID)
+	}
+	return num, nil
 }
