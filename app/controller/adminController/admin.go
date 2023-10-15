@@ -5,7 +5,6 @@ import (
 	"TeamRegistrationSystem-Back/app/services/adminService"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,9 +46,7 @@ func AdminInterface(c *gin.Context) {
 		return
 	}
 
-	for _, j := range allUserInfo {
-		fmt.Println(j)
-	}
+	utils.JsonSuccessResponse(c, allUserInfo)
 
 	// allTeamInfo, err := adminService.GetAllTeamInfo()
 	// if err != nil {
@@ -110,9 +107,7 @@ func AdminGetTeam(c *gin.Context) {
 	// 	"team_info": allTeamInfo,
 	// })
 
-	for _, j := range allTeamInfo {
-		fmt.Println(j)
-	}
+	utils.JsonSuccessResponse(c, allTeamInfo)
 }
 
 type GetMessageData struct {
