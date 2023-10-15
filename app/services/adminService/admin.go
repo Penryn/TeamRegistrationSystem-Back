@@ -8,6 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+func CheckUserExistByUID(uid int) error {
+	result := database.DB.Where("user_id = ?", uid).First(&models.User{})
+	return result.Error
+}
+
 func IsAdmin(UserID int) (int, error) {
 	var user models.User
 	err := database.DB.First(&user, UserID).Error
@@ -28,7 +33,7 @@ func GetAllUserInfo() ([]models.Userinfo, error) {
 
 func GetUserByUserID(uid int) models.User {
 	var user models.User
-	database.DB.Where("uid = ?", uid).First(&user)
+	database.DB.Where("user_id = ?", uid).First(&user)
 	return user
 }
 
@@ -131,7 +136,7 @@ func UpdateUserNumber(tid int) error {
 func DeleteRelevantTeamInfo(uid int) error {
 	// var userTeam []models.Team
 	var userTeam models.Team
-	result := database.DB.Where("user_id = ?", uid).Find(&userTeam)
+	result := database.DB.Preload("Users").Where("user_id = ?", uid).Find(&userTeam)
 	if result.Error != nil {
 		return result.Error
 	}

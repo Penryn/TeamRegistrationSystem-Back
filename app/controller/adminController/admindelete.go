@@ -4,7 +4,6 @@ import (
 	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/adminService"
-	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
 	"TeamRegistrationSystem-Back/config/database"
 
@@ -27,7 +26,7 @@ func DeleteUserAndMessages(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "invalid user")
 		return
 	}
-	terr := userService.CheckUserExistByUID(m)
+	terr := adminService.CheckUserExistByUID(m)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
