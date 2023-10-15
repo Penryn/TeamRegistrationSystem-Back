@@ -64,6 +64,10 @@ func AdminInterface(c *gin.Context) {
 
 }
 
+type GetTeamOpData struct {
+	Op int `form:"team_confirm" binding:"required"`
+}
+
 func AdminGetTeam(c *gin.Context) {
 	//获取用户身份token
 	n, er := c.Get("UserID")
@@ -89,14 +93,14 @@ func AdminGetTeam(c *gin.Context) {
 		return
 	}
 
-	var op int
+	var op GetTeamOpData
 	err := c.ShouldBindQuery(&op)
 	if err != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
 
-	allTeamInfo, err := adminService.GetAllTeamInfo(op)
+	allTeamInfo, err := adminService.GetAllTeamInfo(op.Op)
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
@@ -112,7 +116,7 @@ func AdminGetTeam(c *gin.Context) {
 }
 
 type GetMessageData struct {
-	Name string `form:"user_name" binding:"required"`
+	Name string `form:"information" binding:"required"`
 }
 
 func AdminMessage(c *gin.Context) {
@@ -149,7 +153,7 @@ func AdminMessage(c *gin.Context) {
 	}
 
 	result := adminService.CreateMessage(msg.Name)
-	if result.Error != nil {
+	if result != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.Unknown.Msg)
 	}
 	utils.JsonSuccessResponse(c, nil)
