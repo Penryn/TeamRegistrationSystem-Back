@@ -3,8 +3,8 @@ package adminController
 import (
 	"TeamRegistrationSystem-Back/app/apiExpection"
 	"TeamRegistrationSystem-Back/app/services/adminService"
-	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +27,7 @@ func AdminInterface(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "invalid user")
 		return
 	}
-	terr := userService.CheckUserExistByUID(uid)
+	terr := adminService.CheckUserExistByUID(uid)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
@@ -40,13 +40,13 @@ func AdminInterface(c *gin.Context) {
 		return
 	}
 
-	allUserInfo, err := adminService.GetAllUserInfo()
+	allUser, err := adminService.GetAllUser()
 	if err != nil {
 		utils.JsonInternalServerErrorResponse(c)
 		return
 	}
 
-	utils.JsonSuccessResponse(c, allUserInfo)
+	utils.JsonSuccessResponse(c, allUser)
 
 	// allTeamInfo, err := adminService.GetAllTeamInfo()
 	// if err != nil {
@@ -67,6 +67,8 @@ type GetTeamOpData struct {
 
 func AdminGetTeam(c *gin.Context) {
 	//获取用户身份token
+	fmt.Println(1)
+
 	n, er := c.Get("UserID")
 	if !er {
 		utils.JsonErrorResponse(c, 200, "token获取失败")
@@ -77,7 +79,10 @@ func AdminGetTeam(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "invalid user")
 		return
 	}
-	terr := userService.CheckUserExistByUID(m)
+
+	fmt.Println(2)
+
+	terr := adminService.CheckUserExistByUID(m)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
@@ -89,6 +94,8 @@ func AdminGetTeam(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
 		return
 	}
+
+	fmt.Println(3)
 
 	var op GetTeamOpData
 	err := c.ShouldBindQuery(&op)
@@ -126,7 +133,7 @@ func AdminMessage(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, "invalid user")
 		return
 	}
-	terr := userService.CheckUserExistByUID(m)
+	terr := adminService.CheckUserExistByUID(m)
 	if terr != nil {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return

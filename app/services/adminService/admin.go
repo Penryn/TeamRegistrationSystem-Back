@@ -22,8 +22,8 @@ func IsAdmin(UserID int) (int, error) {
 	return user.Permission, nil
 }
 
-func GetAllUserInfo() ([]models.Userinfo, error) {
-	var infoList []models.Userinfo
+func GetAllUser() ([]models.User, error) {
+	var infoList []models.User
 	result := database.DB.Find(&infoList)
 	if result.Error != nil {
 		return nil, result.Error
