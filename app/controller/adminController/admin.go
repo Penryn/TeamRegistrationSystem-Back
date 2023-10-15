@@ -2,11 +2,9 @@ package adminController
 
 import (
 	"TeamRegistrationSystem-Back/app/apiExpection"
-	"TeamRegistrationSystem-Back/app/models"
 	"TeamRegistrationSystem-Back/app/services/adminService"
 	"TeamRegistrationSystem-Back/app/services/userService"
 	"TeamRegistrationSystem-Back/app/utils"
-	"TeamRegistrationSystem-Back/config/database"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -36,23 +34,7 @@ func AdminInterface(c *gin.Context) {
 		return
 	}
 
-	// var data adminIdentify
-	// err := c.ShouldBindJSON(&data)
-	// if err != nil {
-	// 	utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
-	// 	return
-	// }
-	// //判断操作权限
-	// if data.Permission == 0 {
-	// 	utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
-	// 	return
-	// }
-
-	//我不知道他们有没有（
-	//还是说我应该从数据库拿
-
-	var user models.User
-	database.DB.Where("uid = ?", uid).First(&user)
+	user := adminService.GetUserByUserID(uid)
 	permission := user.Permission
 	if permission == 0 {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
@@ -99,8 +81,8 @@ func AdminGetTeam(c *gin.Context) {
 		utils.JsonErrorResponse(c, 200, apiExpection.ParamError.Msg)
 		return
 	}
-	var user models.User
-	database.DB.Where("uid = ?", m).First(&user)
+
+	user := adminService.GetUserByUserID(m)
 	permission := user.Permission
 	if permission == 0 {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")
@@ -151,8 +133,7 @@ func AdminMessage(c *gin.Context) {
 		return
 	}
 
-	var now models.User
-	database.DB.Where("uid = ?", m).First(&now)
+	now := adminService.GetUserByUserID(m)
 	permission := now.Permission
 	if permission == 0 {
 		utils.JsonErrorResponse(c, 200, "insufficient privileges to perform the operation")

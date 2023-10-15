@@ -26,6 +26,12 @@ func GetAllUserInfo() ([]models.Userinfo, error) {
 	return infoList, nil
 }
 
+func GetUserByUserID(uid int) models.User {
+	var user models.User
+	database.DB.Where("uid = ?", uid).First(&user)
+	return user
+}
+
 func GetAllTeamInfo(op int) ([]models.Team, error) {
 	var infoList []models.Team
 	result := database.DB.Where("confirm = ?", op).Find(&infoList)
