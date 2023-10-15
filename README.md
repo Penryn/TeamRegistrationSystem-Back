@@ -4,6 +4,8 @@
 
 [后端项目地址](https://github.com/Penryn/TeamRegistrationSystem-Back)
 
+[项目网址](http://47.115.209.120:5173)
+
 ## 团队报名系统
 
 #### 基础要求
